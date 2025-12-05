@@ -6,13 +6,11 @@
 <title>Coming Soon</title>
 
 <style>
-/* ============================
-   DESKTOP DEFAULT (unchanged)
-   ============================*/
 body {
   margin:0;
+  height:100vh;
   background:black;
-  overflow:hidden; /* Desktop only */
+  overflow:hidden;
   font-family:"Courier New", monospace;
 }
 
@@ -26,15 +24,15 @@ body {
   z-index:50;
   color:white;
 }
-#countdown-label { font-size:6vw; margin-bottom:0.3rem; }
+#countdown-label { font-size:2rem; margin-bottom:0.3rem; }
 #countdown {
-  font-size:10vw;
+  font-size:3rem;
   font-weight:bold;
   color:white;
   text-shadow:0 0 10px #00ff00,0 0 20px #00ff00;
 }
 
-/* REACTOR */
+/* REACTOR (Responsive within constraints) */
 #reactor-fill {
   position:absolute;
   top:50%;
@@ -53,7 +51,7 @@ body {
 .side-panel {
   position:absolute;
   top:50%;
-  width:260px;
+  width:280px;
   padding:20px;
   background:rgba(0,0,0,0.3);
   border:2px solid #00ffbf;
@@ -69,7 +67,6 @@ body {
 .panel-title {
   color:#00ffe0;
   margin-bottom:10px;
-  font-size:1rem;
 }
 .panel-log {
   height:180px;
@@ -77,7 +74,6 @@ body {
   opacity:0.85;
   color:#00ffb5;
   position:relative;
-  font-size:0.8rem;
 }
 
 /* SCANLINES */
@@ -89,8 +85,8 @@ body {
   z-index:999;
 }
 
-/* MATRIX */
-#matrix-canvas{
+/* MATRIX CANVAS */
+#matrix-canvas {
   position:absolute;
   top:0; left:0;
   width:100%; height:100%;
@@ -98,123 +94,112 @@ body {
   pointer-events:none;
 }
 
-/* ===========================================
-   MOBILE FIX — NO OVERLAPS, VERTICAL STACK
-   ===========================================*/
+/* =========================================
+       MOBILE RESPONSIVE FIXES
+   ========================================= */
 @media (max-width: 768px) {
 
-  body {
-    overflow:auto !important;
-    height:auto !important;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding: 20px 0;
-    gap: 25px;
+  #countdown-label {
+    font-size:5vw;
+  }
+  #countdown {
+    font-size:8vw;
   }
 
-  /* remove absolute positioning */
-  #countdown-container,
-  #reactor-fill,
+  /* reactor smaller on mobile */
+  #reactor-fill {
+    width:70vw;
+    height:70vw;
+    max-width:350px;
+    max-height:350px;
+  }
+
+  /* stack the panels */
   #left-panel,
   #right-panel {
-    position:relative !important;
-    top:auto !important;
-    left:auto !important;
+    position:relative;
+    top:auto;
+    left:50% !important;
     right:auto !important;
-    transform:none !important;
-    margin:0 auto;
+    transform:translateX(-50%);
+    width:90vw;
+    max-width:350px;
+    margin-top:20px;
   }
 
-  /* countdown sizing */
-  #countdown-label { font-size:6vw !important; }
-  #countdown { font-size:10vw !important; }
-
-  /* reactor centered */
-  #reactor-fill {
-    width:80vw !important;
-    height:80vw !important;
-    max-width:350px !important;
-    max-height:350px !important;
-  }
-
-  /* panels stacked */
-  .side-panel {
-    width:90vw !important;
-    max-width:360px;
-    height:auto;
-    padding:15px;
+  .panel-title {
+    font-size:4vw;
+    text-align:center;
   }
 
   .panel-log {
-    height:150px !important;
-    font-size:3.8vw !important;
+    font-size:3.5vw;
+    height:140px;
+  }
+
+  #countdown-container {
+    top:18%;
   }
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- TOP PANEL IN MOBILE -->
-<div id="left-panel" class="side-panel">
-  <div class="panel-title">[NODE ALPHA]</div>
-  <div class="panel-log" id="log1"></div>
-</div>
+<canvas id="reactor-fill"></canvas>
+<canvas id="matrix-canvas"></canvas>
 
-<!-- COUNTDOWN -->
 <div id="countdown-container">
   <div id="countdown-label">Event starts in:</div>
   <div id="countdown">Loading...</div>
 </div>
 
-<!-- REACTOR -->
-<canvas id="reactor-fill"></canvas>
+<div id="left-panel" class="side-panel">
+  <div class="panel-title">[NODE ALPHA]</div>
+  <div class="panel-log" id="log1"></div>
+</div>
 
-<!-- BOTTOM PANEL IN MOBILE -->
 <div id="right-panel" class="side-panel">
   <div class="panel-title">[NODE OMEGA]</div>
   <div class="panel-log" id="log2"></div>
 </div>
 
-<!-- FX -->
-<canvas id="matrix-canvas"></canvas>
 <div class="scanlines"></div>
 
-<script>
 
+<script>
 /* ------------------- FIXED CANVAS RESPONSIVE SIZE ------------------- */
 const canvas = document.getElementById("reactor-fill");
 const ctx = canvas.getContext("2d");
+
+let cx=210, cy=210, radius=200;
 
 function resizeCanvas(){
   const size = canvas.clientWidth;
   canvas.width = size;
   canvas.height = size;
 
-  cx = size/2;
-  cy = size/2;
-  radius = size/2 - 10;
+  cx = size / 2;
+  cy = size / 2;
+  radius = size / 2 - 10;
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-/* ------------------- YOUR ORIGINAL SCRIPT — UNCHANGED ------------------- */
+/* ------------------- ORIGINAL SCRIPT (UNCHANGED FUNCTIONALITY) ------------------- */
 
 const fixedStartDate = new Date("2025-12-05T00:00:00");
 const targetDate = new Date("2026-01-06T00:00:00");
 const totalDuration = targetDate - fixedStartDate;
 
-let cx=210, cy=210, radius=200;
-
+/* logs */
 function cycleLogs(el, lines){
   let i=0;
-  el._int = setInterval(()=> {
+  el._int = setInterval(()=>{
     el.innerHTML += "> "+lines[i]+"<br>";
     if(el.innerHTML.split("<br>").length>8)
       el.innerHTML = el.innerHTML.split("<br>").slice(1).join("<br>");
-    i = (i+1)%lines.length;
+    i = (i+1) % lines.length;
   },1500);
 }
 
@@ -231,7 +216,6 @@ const alphaLogs = [
   "Analyzing packets... system stable",
   "Telemetry anomaly:> check channel >"
 ];
-
 const omegaLogs = [
   "Monitoring sequences... 7810892",
   "Transmission nominal...10-10",
@@ -255,7 +239,6 @@ const ideathonLogs = [
   ">Deploying interface nodes...<",
   "Finalizing ideathon sequence..."
 ];
-
 const hackathonLogs = [
   "Hackathon Node X initiated",
   "Data streams aligned...",
@@ -266,42 +249,43 @@ const hackathonLogs = [
   "Final checks complete to enter..."
 ];
 
-function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+/* easing */
+function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
 
+/* state */
 let countdownOver=false;
 let draining=false;
 let drainProgress=0;
 let seq=[];
 const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowRight","ArrowLeft","Enter"];
 
+/* MATRIX */
 let matrixActive=false;
-const matrixCanvas = document.getElementById("matrix-canvas");
-const mctx = matrixCanvas.getContext("2d");
-matrixCanvas.width = window.innerWidth;
-matrixCanvas.height = window.innerHeight;
-const fontSize = 18;
-const columns = Math.floor(matrixCanvas.width / fontSize);
-const drops = Array(columns).fill(1);
+const matrixCanvas=document.getElementById("matrix-canvas");
+const mctx=matrixCanvas.getContext("2d");
+matrixCanvas.width=window.innerWidth;
+matrixCanvas.height=window.innerHeight;
+const fontSize=18;
+const columns=Math.floor(matrixCanvas.width / fontSize);
+const drops=Array(columns).fill(1);
 
 function drawMatrix(){
   if(!matrixActive) return;
-  mctx.fillStyle = "rgba(0,0,0,0.05)";
+  mctx.fillStyle="rgba(0,0,0,0.05)";
   mctx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
-  mctx.fillStyle = "#0F0";
-  mctx.font = fontSize + "px monospace";
+  mctx.fillStyle="#0F0";
+  mctx.font=fontSize+"px monospace";
 
   for(let i=0;i<columns;i++){
-    const text = String.fromCharCode(33 + Math.floor(Math.random()*94));
+    const text=String.fromCharCode(33+Math.floor(Math.random()*94));
     mctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-    if(drops[i]*fontSize > matrixCanvas.height && Math.random() > 0.975)
-      drops[i]=0;
-
+    if(drops[i]*fontSize > matrixCanvas.height && Math.random()>0.975) drops[i]=0;
     drops[i]++;
   }
   requestAnimationFrame(drawMatrix);
 }
 
+/* KONAMI CODE */
 window.addEventListener("keydown", e=>{
   seq.push(e.key);
   if(seq.length>konami.length) seq.shift();
@@ -311,16 +295,18 @@ window.addEventListener("keydown", e=>{
     draining=true;
     drainProgress=0;
 
-    log1.parentElement.style.transform = "translateX(-150vw) rotate(-30deg)";
-    log2.parentElement.style.transform = "translateX(150vw) rotate(30deg)";
-    log1.parentElement.style.opacity = 0;
-    log2.parentElement.style.opacity = 0;
+    log1.parentElement.style.transform="translateX(-150vw) rotate(-30deg)";
+    log2.parentElement.style.transform="translateX(150vw) rotate(30deg)";
+    log1.parentElement.style.opacity=0;
+    log2.parentElement.style.opacity=0;
   }
 });
 
+/* DRAW */
 let waveShift=0;
-const originalDrawWave = function(percent){
-  let eased=easeOutCubic(draining ? 1 - drainProgress : percent);
+
+const originalDrawWave=function(percent){
+  let eased=easeOutCubic(draining ? 1-drainProgress : percent);
   const waves=[
     {amp:12, wl:110, sp:0.05},
     {amp:8, wl:80, sp:0.07},
@@ -329,17 +315,17 @@ const originalDrawWave = function(percent){
   ];
   const halfH=canvas.height/2;
   const fillH=halfH*eased;
-  const color = countdownOver ? "#FFD700" : "#1B5287"; 
+  const color = countdownOver ? "#FFD700" : "#1B5287";
   ctx.fillStyle=color;
 
   ctx.beginPath();
   for(let x=0;x<=canvas.width;x++){
     let y=canvas.height-fillH;
-    waves.forEach(w=>{y+=Math.sin(x/w.wl + waveShift*w.sp)*w.amp;});
+    waves.forEach(w=> y+=Math.sin(x/w.wl + waveShift*w.sp)*w.amp );
     if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   }
-  ctx.lineTo(canvas.width,canvas.height);
-  ctx.lineTo(0,canvas.height);
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
   ctx.fill();
 };
 
@@ -358,19 +344,14 @@ function drawArc(percent){
 
   const phaseTime=0.25;
   let phase=Math.min(Math.floor(percent/phaseTime),3);
-  let localPercent=(percent - phase*phaseTime)/phaseTime;
+  let localPercent=(percent-phase*phaseTime)/phaseTime;
 
-  let blueStart=0, blueEnd=0, goldStart=0, goldEnd=0;
+  let blueEnd=0,goldStart=0,goldEnd=0;
 
-  if(phase===0){ 
-    blueEnd=localPercent; 
-  } else if(phase===1){ 
-    blueEnd=1; goldStart=1; goldEnd=1-localPercent;
-  } else if(phase===2){ 
-    goldEnd=1; blueEnd=localPercent;
-  } else if(phase===3){ 
-    blueEnd=1; goldStart=1; goldEnd=1-localPercent;
-  }
+  if(phase===0){ blueEnd=localPercent; }
+  else if(phase===1){ blueEnd=1; goldStart=1; goldEnd=1-localPercent; }
+  else if(phase===2){ goldEnd=1; blueEnd=localPercent; }
+  else if(phase===3){ blueEnd=1; goldStart=1; goldEnd=1-localPercent; }
 
   if(draining){
     blueEnd=0;
@@ -385,7 +366,7 @@ function drawArc(percent){
     ctx.shadowColor=color;
     ctx.shadowBlur=20;
     ctx.lineWidth=8;
-    ctx.arc(cx,cy,radius,startAngle + start*2*Math.PI,startAngle + end*2*Math.PI);
+    ctx.arc(cx,cy,radius,startAngle + start*2*Math.PI, startAngle + end*2*Math.PI);
     ctx.stroke();
   }
 
@@ -396,11 +377,11 @@ function drawArc(percent){
 }
 
 function drawElevate(){
-  ctx.fillStyle = "#ffffff";
-  ctx.font="bold " + (canvas.width*0.15) + "px Courier New";
+  ctx.fillStyle="#fff";
+  ctx.font="bold "+(canvas.width*0.15)+"px Courier New";
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.shadowColor="#ffffff";
+  ctx.shadowColor="#fff";
   ctx.shadowBlur=20;
   ctx.fillText("ELEVATE", cx, cy);
 }
@@ -410,7 +391,7 @@ function draw(percent){
 
   ctx.save();
   ctx.beginPath();
-  ctx.arc(cx,cy,radius,0,Math.PI*2);
+  ctx.arc(cx,cy,radius,0,2*Math.PI);
   ctx.clip();
 
   waveShift+=0.06;
@@ -424,6 +405,7 @@ function draw(percent){
   ctx.restore();
 }
 
+/* MAIN LOOP */
 const countdownEl=document.getElementById("countdown");
 const countdownContainer=document.getElementById("countdown-container");
 
@@ -450,7 +432,6 @@ function update(){
       setTimeout(()=>{
         document.body.style.transition="transform 2s ease-in";
         document.body.style.transform="translateY(-100vh)";
-
         setTimeout(()=>window.location.href="portal.html",2000);
       },500);
     }
@@ -480,7 +461,7 @@ function update(){
 }
 
 update();
-
 </script>
+
 </body>
 </html>
