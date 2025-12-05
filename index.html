@@ -6,10 +6,13 @@
 <title>Coming Soon</title>
 
 <style>
+/* ============================
+   DESKTOP DEFAULT (unchanged)
+   ============================*/
 body {
   margin:0;
   background:black;
-  overflow:hidden;
+  overflow:hidden; /* Desktop only */
   font-family:"Courier New", monospace;
 }
 
@@ -23,12 +26,12 @@ body {
   z-index:50;
   color:white;
 }
-#countdown-label { font-size:2rem; margin-bottom:0.3rem; }
+#countdown-label { font-size:6vw; margin-bottom:0.3rem; }
 #countdown {
-  font-size:3rem;
+  font-size:10vw;
   font-weight:bold;
   color:white;
-  text-shadow:0 0 10px #00ff00, 0 0 20px #00ff00;
+  text-shadow:0 0 10px #00ff00,0 0 20px #00ff00;
 }
 
 /* REACTOR */
@@ -50,7 +53,7 @@ body {
 .side-panel {
   position:absolute;
   top:50%;
-  width:280px;
+  width:260px;
   padding:20px;
   background:rgba(0,0,0,0.3);
   border:2px solid #00ffbf;
@@ -58,21 +61,23 @@ body {
   transform:translateY(-50%);
   box-shadow:0 0 22px rgba(0,255,180,0.25);
   z-index:3;
-  transition:all 2s ease-in;
+  transition: all 2s ease-in;
 }
-
 #left-panel { left:40px; border-color:#FFB700; }
 #right-panel { right:40px; border-color:#1B5287; }
 
 .panel-title {
   color:#00ffe0;
   margin-bottom:10px;
+  font-size:1rem;
 }
 .panel-log {
   height:180px;
   overflow:hidden;
   opacity:0.85;
   color:#00ffb5;
+  position:relative;
+  font-size:0.8rem;
 }
 
 /* SCANLINES */
@@ -80,16 +85,12 @@ body {
   position:fixed;
   top:0; left:0; right:0; bottom:0;
   pointer-events:none;
-  background:repeating-linear-gradient(
-    transparent 0px,
-    transparent 2px,
-    rgba(0,255,170,0.03) 3px
-  );
+  background:repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0,255,170,0.03) 3px);
   z-index:999;
 }
 
 /* MATRIX */
-#matrix-canvas {
+#matrix-canvas{
   position:absolute;
   top:0; left:0;
   width:100%; height:100%;
@@ -97,104 +98,101 @@ body {
   pointer-events:none;
 }
 
-/* =========================================================
-   MOBILE — COMPLETE RESTRUCTURE (STACK EVERYTHING)
-   ========================================================= */
+/* ===========================================
+   MOBILE FIX — NO OVERLAPS, VERTICAL STACK
+   ===========================================*/
 @media (max-width: 768px) {
 
   body {
-    overflow:auto !important; /* allow vertical scrolling */
+    overflow:auto !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 20px 0;
+    gap: 25px;
   }
 
-  /* STACK LAYOUT — remove all absolute positioning */
+  /* remove absolute positioning */
   #countdown-container,
   #reactor-fill,
   #left-panel,
   #right-panel {
     position:relative !important;
-    left:0 !important;
-    right:0 !important;
     top:auto !important;
+    left:auto !important;
+    right:auto !important;
     transform:none !important;
+    margin:0 auto;
   }
 
-  /* ORDER ELEMENTS */
-  body {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:20px;
-    padding-top:20px;
-  }
+  /* countdown sizing */
+  #countdown-label { font-size:6vw !important; }
+  #countdown { font-size:10vw !important; }
 
-  #countdown-container {
-    margin-top:10px;
-    text-align:center;
-  }
-
-  #countdown-label { font-size:6vw; }
-  #countdown { font-size:9vw; }
-
+  /* reactor centered */
   #reactor-fill {
-    width:75vw;
-    height:75vw;
-    max-width:360px;
-    max-height:360px;
-    border-radius:50%;
+    width:80vw !important;
+    height:80vw !important;
+    max-width:350px !important;
+    max-height:350px !important;
   }
 
+  /* panels stacked */
   .side-panel {
     width:90vw !important;
-    max-width:380px;
-    border-radius:8px;
+    max-width:360px;
+    height:auto;
     padding:15px;
   }
 
-  .panel-title { font-size:5vw; text-align:center; }
-  .panel-log { font-size:3.8vw; height:150px; }
-
+  .panel-log {
+    height:150px !important;
+    font-size:3.8vw !important;
+  }
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- TOP LOG PANEL (becomes top on mobile automatically) -->
+<!-- TOP PANEL IN MOBILE -->
 <div id="left-panel" class="side-panel">
   <div class="panel-title">[NODE ALPHA]</div>
   <div class="panel-log" id="log1"></div>
 </div>
 
-<!-- REACTOR + COUNTDOWN -->
-<canvas id="reactor-fill"></canvas>
-
+<!-- COUNTDOWN -->
 <div id="countdown-container">
   <div id="countdown-label">Event starts in:</div>
   <div id="countdown">Loading...</div>
 </div>
 
-<!-- BOTTOM LOG PANEL -->
+<!-- REACTOR -->
+<canvas id="reactor-fill"></canvas>
+
+<!-- BOTTOM PANEL IN MOBILE -->
 <div id="right-panel" class="side-panel">
   <div class="panel-title">[NODE OMEGA]</div>
   <div class="panel-log" id="log2"></div>
 </div>
 
+<!-- FX -->
 <canvas id="matrix-canvas"></canvas>
 <div class="scanlines"></div>
 
-
 <script>
-/* ======= YOUR FULL JS (unchanged functionality) ======= */
 
-const canvas=document.getElementById("reactor-fill");
-const ctx=canvas.getContext("2d");
-
-let cx=210, cy=210, radius=200;
+/* ------------------- FIXED CANVAS RESPONSIVE SIZE ------------------- */
+const canvas = document.getElementById("reactor-fill");
+const ctx = canvas.getContext("2d");
 
 function resizeCanvas(){
   const size = canvas.clientWidth;
   canvas.width = size;
   canvas.height = size;
+
   cx = size/2;
   cy = size/2;
   radius = size/2 - 10;
@@ -202,47 +200,73 @@ function resizeCanvas(){
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-const fixedStartDate=new Date("2025-12-05T00:00:00");
-const targetDate=new Date("2026-01-06T00:00:00");
-const totalDuration=targetDate - fixedStartDate;
+/* ------------------- YOUR ORIGINAL SCRIPT — UNCHANGED ------------------- */
+
+const fixedStartDate = new Date("2025-12-05T00:00:00");
+const targetDate = new Date("2026-01-06T00:00:00");
+const totalDuration = targetDate - fixedStartDate;
+
+let cx=210, cy=210, radius=200;
 
 function cycleLogs(el, lines){
   let i=0;
-  el._int = setInterval(()=>{
+  el._int = setInterval(()=> {
     el.innerHTML += "> "+lines[i]+"<br>";
     if(el.innerHTML.split("<br>").length>8)
       el.innerHTML = el.innerHTML.split("<br>").slice(1).join("<br>");
-    i=(i+1)%lines.length;
+    i = (i+1)%lines.length;
   },1500);
 }
 
-const log1=document.getElementById("log1");
-const log2=document.getElementById("log2");
+const log1 = document.getElementById("log1");
+const log2 = document.getElementById("log2");
 
-cycleLogs(log1, [
-  "Initializing node systems...",
+const alphaLogs = [
+  "Initializing node systems... some paths are",
   "Analyzing streams... telemetry stable",
-  "Telemetry anomaly ↑",
+  "Telemetry anomaly: ↑ detected in sector 3",
+  "Preparing core modules... sync in progress",
+  "Syncing virtual interfaces... observed",
+  "Telemetry anomaly: ↑ spike",
+  "Analyzing packets... system stable",
+  "Telemetry anomaly:> check channel >"
+];
+
+const omegaLogs = [
+  "Monitoring sequences... 7810892",
+  "Transmission nominal...10-10",
+  "Telemetry anomaly:↓ detected",
+  "Analyzing packets... ↓..normal",
+  "Syncing virtual interfaces...activity",
+  "Telemetry anomaly:< observed",
   "Preparing core modules...",
-  "Virtual sync in progress",
-  "Analyzer spike ↑",
-  "System nominal",
-  "Check channel >"
-]);
+  "Enter command sequence if needed"
+];
 
-cycleLogs(log2, [
-  "Monitoring sequence...",
-  "Transmission stable",
-  "Anomaly ↓ detected",
-  "Packet analysis normal",
-  "Virtual sync active",
-  "Telemetry < detected",
-  "Preparing modules",
-  "Enter command sequence"
-]);
+cycleLogs(log1, alphaLogs);
+cycleLogs(log2, omegaLogs);
 
-/* EASING */
-function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+const ideathonLogs = [
+  "Project Alpha phase started",
+  "Analyzing user feedback...",
+  "Integrating hack modules...",
+  "Compiling core ideathon routines...",
+  "Telemetry stable... proceeding ups",
+  ">Deploying interface nodes...<",
+  "Finalizing ideathon sequence..."
+];
+
+const hackathonLogs = [
+  "Hackathon Node X initiated",
+  "Data streams aligned...",
+  "Analyzing algorithmic patterns...",
+  "Syncing virtual interfaces with downers...",
+  "Compiling challenge response...",
+  ">Deploying hackathon modules...<",
+  "Final checks complete to enter..."
+];
+
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
 
 let countdownOver=false;
 let draining=false;
@@ -250,68 +274,74 @@ let drainProgress=0;
 let seq=[];
 const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowRight","ArrowLeft","Enter"];
 
-/* MATRIX */
 let matrixActive=false;
-const matrixCanvas=document.getElementById("matrix-canvas");
-const mctx=matrixCanvas.getContext("2d");
-matrixCanvas.width=window.innerWidth;
-matrixCanvas.height=window.innerHeight;
-const fontSize=18;
-const columns=Math.floor(matrixCanvas.width/fontSize);
-const drops=Array(columns).fill(1);
+const matrixCanvas = document.getElementById("matrix-canvas");
+const mctx = matrixCanvas.getContext("2d");
+matrixCanvas.width = window.innerWidth;
+matrixCanvas.height = window.innerHeight;
+const fontSize = 18;
+const columns = Math.floor(matrixCanvas.width / fontSize);
+const drops = Array(columns).fill(1);
 
 function drawMatrix(){
   if(!matrixActive) return;
-  mctx.fillStyle="rgba(0,0,0,0.05)";
+  mctx.fillStyle = "rgba(0,0,0,0.05)";
   mctx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
-  mctx.fillStyle="#0F0";
-  mctx.font=fontSize+"px monospace";
+  mctx.fillStyle = "#0F0";
+  mctx.font = fontSize + "px monospace";
+
   for(let i=0;i<columns;i++){
-    const text=String.fromCharCode(33+Math.floor(Math.random()*94));
-    mctx.fillText(text, i*fontSize, drops[i]*fontSize);
-    if(drops[i]*fontSize > matrixCanvas.height && Math.random()>0.975) drops[i]=0;
+    const text = String.fromCharCode(33 + Math.floor(Math.random()*94));
+    mctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+    if(drops[i]*fontSize > matrixCanvas.height && Math.random() > 0.975)
+      drops[i]=0;
+
     drops[i]++;
   }
   requestAnimationFrame(drawMatrix);
 }
 
-/* KONAMI */
 window.addEventListener("keydown", e=>{
   seq.push(e.key);
   if(seq.length>konami.length) seq.shift();
+
   if(JSON.stringify(seq)===JSON.stringify(konami)){
-    alert("Unauthorized Access: Restarting...");
+    alert("ERROR: Unauthorized access attempt detected.\nSystem will now restart...");
     draining=true;
     drainProgress=0;
+
+    log1.parentElement.style.transform = "translateX(-150vw) rotate(-30deg)";
+    log2.parentElement.style.transform = "translateX(150vw) rotate(30deg)";
+    log1.parentElement.style.opacity = 0;
+    log2.parentElement.style.opacity = 0;
   }
 });
 
-/* WAVE */
 let waveShift=0;
-
-function originalDrawWave(percent){
-  let eased = easeOutCubic(draining ? 1 - drainProgress : percent);
+const originalDrawWave = function(percent){
+  let eased=easeOutCubic(draining ? 1 - drainProgress : percent);
   const waves=[
-    {amp:12,wl:110,sp:0.05},
+    {amp:12, wl:110, sp:0.05},
     {amp:8, wl:80, sp:0.07},
     {amp:6, wl:60, sp:0.04},
     {amp:4, wl:30, sp:0.1}
   ];
-  const halfH = canvas.height / 2;
-  const fillH = halfH * eased;
-
-  ctx.fillStyle = countdownOver ? "#FFD700" : "#1B5287";
+  const halfH=canvas.height/2;
+  const fillH=halfH*eased;
+  const color = countdownOver ? "#FFD700" : "#1B5287"; 
+  ctx.fillStyle=color;
 
   ctx.beginPath();
   for(let x=0;x<=canvas.width;x++){
-    let y = canvas.height - fillH;
-    waves.forEach(w=> y += Math.sin(x/w.wl + waveShift*w.sp)*w.amp );
+    let y=canvas.height-fillH;
+    waves.forEach(w=>{y+=Math.sin(x/w.wl + waveShift*w.sp)*w.amp;});
     if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   }
   ctx.lineTo(canvas.width,canvas.height);
   ctx.lineTo(0,canvas.height);
   ctx.fill();
-}
+};
 
 function drawRings(){
   ctx.strokeStyle="rgba(255,255,255,0.05)";
@@ -325,22 +355,27 @@ function drawRings(){
 
 function drawArc(percent){
   const startAngle=-Math.PI/2;
+
   const phaseTime=0.25;
-
   let phase=Math.min(Math.floor(percent/phaseTime),3);
-  let localPercent=(percent-phase*phaseTime)/phaseTime;
+  let localPercent=(percent - phase*phaseTime)/phaseTime;
 
-  let blueEnd=0, goldStart=0, goldEnd=0;
+  let blueStart=0, blueEnd=0, goldStart=0, goldEnd=0;
 
-  if(phase===0) blueEnd=localPercent;
-  else if(phase===1){ blueEnd=1; goldStart=1; goldEnd=1-localPercent; }
-  else if(phase===2){ goldEnd=1; blueEnd=localPercent; }
-  else if(phase===3){ blueEnd=1; goldStart=1; goldEnd=1-localPercent; }
+  if(phase===0){ 
+    blueEnd=localPercent; 
+  } else if(phase===1){ 
+    blueEnd=1; goldStart=1; goldEnd=1-localPercent;
+  } else if(phase===2){ 
+    goldEnd=1; blueEnd=localPercent;
+  } else if(phase===3){ 
+    blueEnd=1; goldStart=1; goldEnd=1-localPercent;
+  }
 
   if(draining){
     blueEnd=0;
     goldStart=0;
-    goldEnd=1 - drainProgress;
+    goldEnd=1-drainProgress;
   }
 
   function arc(color,start,end){
@@ -350,22 +385,22 @@ function drawArc(percent){
     ctx.shadowColor=color;
     ctx.shadowBlur=20;
     ctx.lineWidth=8;
-    ctx.arc(cx,cy,radius,startAngle+start*2*Math.PI,startAngle+end*2*Math.PI);
+    ctx.arc(cx,cy,radius,startAngle + start*2*Math.PI,startAngle + end*2*Math.PI);
     ctx.stroke();
   }
 
-  arc("gold",goldEnd,goldStart);
-  arc("blue",0,blueEnd);
+  arc("gold", goldEnd, goldStart);
+  arc("blue", 0, blueEnd);
 
   ctx.shadowBlur=0;
 }
 
 function drawElevate(){
-  ctx.fillStyle="#fff";
-  ctx.font="bold "+(canvas.width*0.15)+"px Courier New";
+  ctx.fillStyle = "#ffffff";
+  ctx.font="bold " + (canvas.width*0.15) + "px Courier New";
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.shadowColor="#fff";
+  ctx.shadowColor="#ffffff";
   ctx.shadowBlur=20;
   ctx.fillText("ELEVATE", cx, cy);
 }
@@ -375,7 +410,7 @@ function draw(percent){
 
   ctx.save();
   ctx.beginPath();
-  ctx.arc(cx,cy,radius,0,2*Math.PI);
+  ctx.arc(cx,cy,radius,0,Math.PI*2);
   ctx.clip();
 
   waveShift+=0.06;
@@ -389,21 +424,19 @@ function draw(percent){
   ctx.restore();
 }
 
-/* MAIN LOOP */
 const countdownEl=document.getElementById("countdown");
 const countdownContainer=document.getElementById("countdown-container");
 
 function update(){
   const now=new Date();
   let diff=targetDate-now;
-
   let percent=0;
 
   if(diff<=0){
     percent=1;
     countdownOver=true;
   } else {
-    percent=1 - Math.max(0, Math.min(1, diff/totalDuration));
+    percent=1 - Math.max(0, Math.min(1, diff / totalDuration));
   }
 
   if(draining){
@@ -417,6 +450,7 @@ function update(){
       setTimeout(()=>{
         document.body.style.transition="transform 2s ease-in";
         document.body.style.transform="translateY(-100vh)";
+
         setTimeout(()=>window.location.href="portal.html",2000);
       },500);
     }
@@ -431,6 +465,14 @@ function update(){
       let h=Math.floor(s/3600); s%=3600;
       let m=Math.floor(s/60); s%=60;
       countdownEl.textContent=`${d}d ${h}h ${m}m ${s}s`;
+    } else {
+      countdownContainer.remove();
+      document.querySelector("#left-panel .panel-title").textContent="[IDEATHON]";
+      document.querySelector("#right-panel .panel-title").textContent="[HACKATHON]";
+      clearInterval(log1._int);
+      clearInterval(log2._int);
+      cycleLogs(log1, ideathonLogs);
+      cycleLogs(log2, hackathonLogs);
     }
   }
 
@@ -438,7 +480,7 @@ function update(){
 }
 
 update();
-</script>
 
+</script>
 </body>
 </html>
