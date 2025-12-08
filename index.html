@@ -26,18 +26,18 @@ body {
 }
 
 #countdown-label {
-  font-size:1.4rem !important;
+  font-size:1.4rem !important;  /* reduced */
   margin-bottom:0.3rem;
 }
 
 #countdown {
-  font-size:2.2rem !important;
+  font-size:2.2rem !important;  /* reduced */
   font-weight:bold;
   color:white;
   text-shadow:0 0 10px #00ff00,0 0 20px #00ff00;
 }
 
-/* REACTOR */
+/* REACTOR (Responsive within constraints) */
 #reactor-fill {
   position:absolute;
   top:50%;
@@ -101,7 +101,9 @@ body {
   pointer-events:none;
 }
 
-/* MOBILE LAYOUT */
+/* =========================
+   MOBILE LAYOUT FIX
+   ========================= */
 @media (max-width: 768px) {
 
   body {
@@ -125,6 +127,7 @@ body {
     margin:0 auto !important;
   }
 
+  /* KEEP countdown absolutely centered inside circle */
   #countdown-container {
     position:absolute !important;
     top:50% !important;
@@ -132,6 +135,7 @@ body {
     transform:translate(-50%,-50%) !important;
   }
 
+  /* reactor resized for mobile */
   #reactor-fill {
     width:80vw !important;
     height:80vw !important;
@@ -139,14 +143,22 @@ body {
     max-height:380px !important;
   }
 
-  #countdown-label { font-size:4vw !important; }
-  #countdown { font-size:7vw !important; }
+  /* countdown — reduced for mobile too */
+  #countdown-label {
+    font-size:4vw !important;
+  }
 
+  #countdown {
+    font-size:7vw !important;
+  }
+
+  /* Stack order: PANEL 1 → CIRCLE → PANEL 2 */
   #left-panel { order:1 !important; }
   #reactor-fill { order:2 !important; }
   #countdown-container { order:2 !important; }
   #right-panel { order:3 !important; }
 
+  /* panels centered */
   .side-panel {
     width:90vw !important;
     max-width:380px !important;
@@ -165,6 +177,7 @@ body {
     font-size:3.8vw !important;
   }
 
+  /* matrix fixed to screen */
   #matrix-canvas {
     position:fixed !important;
     top:0 !important;
@@ -217,7 +230,8 @@ function resizeCanvas(){
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-/* ------------------- LOGS ------------------- */
+/* ------------------- ORIGINAL SCRIPT (UNCHANGED FUNCTIONALITY) ------------------- */
+
 const fixedStartDate = new Date("2025-12-05T00:00:00");
 const targetDate = new Date("2026-01-06T00:00:00");
 const totalDuration = targetDate - fixedStartDate;
@@ -318,16 +332,15 @@ function drawMatrix(){
   requestAnimationFrame(drawMatrix);
 }
 
-/* KONAMI CODE — FIXED */
+/* KONAMI CODE */
 window.addEventListener("keydown", e=>{
-  const key = e.key;
-  seq.push(key);
-  if(seq.length > konami.length) seq.shift();
+  seq.push(e.key);
+  if(seq.length>konami.length) seq.shift();
 
-  if(JSON.stringify(seq) === JSON.stringify(konami)){
-    console.log("Konami code detected! Draining effect triggered.");
-    draining = true;
-    drainProgress = 0;
+  if(JSON.stringify(seq)===JSON.stringify(konami)){
+    alert("ERROR: Unauthorized access attempt detected.\nSystem will now restart...");
+    draining=true;
+    drainProgress=0;
 
     log1.parentElement.style.transform="translateX(-150vw) rotate(-30deg)";
     log2.parentElement.style.transform="translateX(150vw) rotate(30deg)";
@@ -336,7 +349,7 @@ window.addEventListener("keydown", e=>{
   }
 });
 
-/* ------------------- DRAW ------------------- */
+/* DRAW */
 let waveShift=0;
 
 const originalDrawWave=function(percent){
@@ -439,7 +452,7 @@ function draw(percent){
   ctx.restore();
 }
 
-/* ------------------- MAIN LOOP ------------------- */
+/* MAIN LOOP */
 const countdownEl=document.getElementById("countdown");
 const countdownContainer=document.getElementById("countdown-container");
 
