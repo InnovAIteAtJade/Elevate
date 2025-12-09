@@ -39,13 +39,13 @@ input, button {
 #hackOutput { 
     display:none; 
     margin-top:20px; 
-    border:1px solid #1B5287; /* outline color changed */
+    border:1px solid #1B5287; 
     padding:10px; 
     height:350px; 
     overflow-y:auto; 
     white-space:pre-line; 
     background:rgba(0,0,0,0.6);
-    color:#FFB700; /* text color changed */
+    color:#FFB700;
 }
 #crt { 
     position:fixed; 
@@ -55,7 +55,7 @@ input, button {
     height:100%; 
     pointer-events:none; 
     z-index:9999;
-    background:repeating-linear-gradient(to bottom, rgba(27,82,135,0.08), rgba(27,82,135,0.08) 3px, rgba(27,82,135,0.02) 4px); /* CRT scanline color changed */
+    background:repeating-linear-gradient(to bottom, rgba(27,82,135,0.08), rgba(27,82,135,0.08) 3px, rgba(27,82,135,0.02) 4px);
     animation: crtPulse 0.25s infinite;
 }
 @keyframes crtPulse {0%{opacity:0.18}50%{opacity:0.23}100%{opacity:0.18}}
@@ -102,9 +102,6 @@ let N3 = rand(5,15);
 let N4 = rand(5,15);
 let N5 = rand(5,15);
 
-// Operators for randomness
-let ops = ['+', '-', '*'];
-
 // Function to generate expression string and calculate result
 function generateExpression(level){
     let expr="", result;
@@ -114,19 +111,19 @@ function generateExpression(level){
             result = V1*2 + N1;
             return {expr:`LEVEL 1 — Structural Offset\n----------------------------------------\nV1*2 + N1 = ${result}\nV1=${V1}\nSolve for N1:`, answer:N1};
         case 2:
-            let a2=rand(2,5);
+            const a2=rand(2,5);
             result = N1*a2 + N2;
             return {expr:`LEVEL 2 — Load Factor Alignment\n----------------------------------------\nN1*${a2} + N2 = ${result}\nSolve for N2:`, answer:N2};
         case 3:
-            let a3=rand(2,6);
+            const a3=rand(2,6);
             result = (N1+N2)*a3 - N3;
             return {expr:`LEVEL 3 — Sequence Flux Stabilization\n----------------------------------------\n(N1+N2)*${a3} - N3 = ${result}\nSolve for N3:`, answer:N3};
         case 4:
-            let a4=rand(1,3), b4=rand(1,3), c4=rand(1,3);
+            const a4=rand(1,3), b4=rand(1,3), c4=rand(1,3);
             result = N1*a4 + N2*b4 + N3*c4 + N4;
             return {expr:`LEVEL 4 — Harmonic Expansion\n----------------------------------------\n(N1*${a4} + N2*${b4} + N3*${c4}) + N4 = ${result}\nSolve for N4:`, answer:N4};
         case 5:
-            let a5=rand(2,4);
+            const a5=rand(2,4);
             result = (N1+N2+N3)*a5 + N4 - N5;
             return {expr:`LEVEL 5 — Stabilizer Core Equation\n----------------------------------------\n((N1+N2+N3)*${a5} + N4) - N5 = ${result}\nSolve for N5:`, answer:N5};
         case 6:
@@ -144,7 +141,10 @@ function showLevel(){
 showLevel();
 
 //------------------ ERROR SHAKE ------------------
-function shakeError(){ puzzleText.classList.add("errorShake"); setTimeout(()=>puzzleText.classList.remove("errorShake"),300);}
+function shakeError(){ 
+    puzzleText.classList.add("errorShake"); 
+    setTimeout(()=>puzzleText.classList.remove("errorShake"),300);
+}
 
 //------------------ USER SUBMISSION ------------------
 document.getElementById("submitPuzzle").onclick=()=>{
@@ -196,26 +196,40 @@ function runLargeOutput(){
     },160);
 }
 
-//------------------ CTRL+SHIFT ------------------
-let ctrl=false, shift=false, revealed=false;
-window.addEventListener("keydown",(e)=>{
-    if(e.key==="Control") ctrl=true;
-    if(e.key==="Shift") shift=true;
-    if(ctrl && shift && !revealed){
-        revealed=true;
-        showEncryptedPopup();
+/* ============================================================
+   
+   ============================================================ */
+
+// 
+const _pw = "SUggMjAyNg=="; //
+
+// 
+const _kcA = atob("Q29udHJvbA==");
+const _kcB = atob("U2hpZnQ=");     
+
+let _kA=false, _kB=false, _r=false;
+
+window.addEventListener("keydown",e=>{
+    if(e.key===_kcA) _kA=true;
+    if(e.key===_kcB) _kB=true;
+
+    if(_kA && _kB && !_r){
+        _r=true;
+        showEncryptedPopup(atob(_pw)); //
     }
 });
-window.addEventListener("keyup",(e)=>{
-    if(e.key==="Control") ctrl=false;
-    if(e.key==="Shift") shift=false;
+
+window.addEventListener("keyup",e=>{
+    if(e.key===_kcA) _kA=false;
+    if(e.key===_kcB) _kB=false;
 });
 
 //------------------ FINAL ENCRYPTED POPUP ------------------
-function showEncryptedPopup(){
-    const encrypted="I H @ ) @ ^";
+function showEncryptedPopup(decodedPassword){
+    const encrypted = decodedPassword;
+
     const msg=`Archival Notice:
-Reference segment ${encrypted} has been recorded in the unauthorized‑access audit log.
+Reference segment ${encrypted} has been recorded in the unauthorized-access audit log.
 
 Subsystems request immediate transition.`;
 
@@ -225,10 +239,10 @@ Subsystems request immediate transition.`;
     popup.style.left="50%";
     popup.style.transform="translate(-50%,-50%)";
     popup.style.background="black";
-    popup.style.border="2px solid #1B5287"; // outline changed
+    popup.style.border="2px solid #1B5287";
     popup.style.padding="20px";
     popup.style.zIndex="999999";
-    popup.style.color="#FFB700"; // text color changed
+    popup.style.color="#FFB700";
     popup.style.width="420px";
     popup.style.textAlign="center";
     popup.style.whiteSpace="pre-line";
@@ -237,16 +251,15 @@ Subsystems request immediate transition.`;
     const btn=document.createElement("button");
     btn.innerText="OK";
     btn.style.marginTop="15px";
-    btn.style.color="#FFB700"; // text color changed
+    btn.style.color="#FFB700";
     btn.style.background="black";
-    btn.style.border="1px solid #1B5287"; // outline changed
+    btn.style.border="1px solid #1B5287";
     btn.style.padding="6px";
     btn.onclick=()=> { window.location.href="portal.html?err=symbol-archive"; };
 
     popup.appendChild(btn);
     document.body.appendChild(popup);
 
-    // Block all escape attempts and outside clicks
     window.onkeydown=e=>e.preventDefault();
     window.onmousedown=e=>e.preventDefault();
     window.onmouseup=e=>e.preventDefault();
@@ -255,4 +268,3 @@ Subsystems request immediate transition.`;
 </script>
 </body>
 </html>
-
