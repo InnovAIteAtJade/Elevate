@@ -342,7 +342,6 @@ function drawMatrix(){
   requestAnimationFrame(drawMatrix);
 }
 
-/* KONAMI LISTENER */
 window.addEventListener("keydown", e=>{
   seq.push(e.key);
   if(seq.length>konami.length) seq.shift();
