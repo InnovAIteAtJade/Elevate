@@ -14,12 +14,12 @@ body {
   font-family:"Courier New", monospace;
 }
 
-/* COUNTDOWN — CENTERED */
-#countdown-wrapper {
+/* COUNTDOWN — REDUCED TO FIT INSIDE CIRCLE */
+#countdown-container {
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%,-50%);
+  transform:translate(-50%, -50%);
   text-align:center;
   z-index:50;
   color:white;
@@ -37,7 +37,7 @@ body {
   text-shadow:0 0 10px #00ff00,0 0 20px #00ff00;
 }
 
-/* REACTOR (Responsive) */
+/* REACTOR (Responsive within constraints) */
 #reactor-fill {
   position:absolute;
   top:50%;
@@ -101,7 +101,9 @@ body {
   pointer-events:none;
 }
 
-/* MOBILE LAYOUT */
+/* =========================
+   MOBILE LAYOUT FIX
+   ========================= */
 @media (max-width: 768px) {
 
   body {
@@ -125,7 +127,7 @@ body {
     margin:0 auto !important;
   }
 
-  #countdown-wrapper {
+  #countdown-container {
     position:absolute !important;
     top:50% !important;
     left:50% !important;
@@ -139,12 +141,17 @@ body {
     max-height:380px !important;
   }
 
-  #countdown-label { font-size:4vw !important; }
-  #countdown { font-size:7vw !important; }
+  #countdown-label {
+    font-size:4vw !important;
+  }
+
+  #countdown {
+    font-size:7vw !important;
+  }
 
   #left-panel { order:1 !important; }
   #reactor-fill { order:2 !important; }
-  #countdown-wrapper { order:2 !important; }
+  #countdown-container { order:2 !important; }
   #right-panel { order:3 !important; }
 
   .side-panel {
@@ -155,10 +162,23 @@ body {
     transform:none !important;
   }
 
-  .panel-title { font-size:4.5vw !important; text-align:center !important; }
-  .panel-log { height:150px !important; font-size:3.8vw !important; }
+  .panel-title {
+    font-size:4.5vw !important;
+    text-align:center !important;
+  }
 
-  #matrix-canvas { position:fixed !important; top:0 !important; left:0 !important; width:100vw !important; height:100vh !important; }
+  .panel-log {
+    height:150px !important;
+    font-size:3.8vw !important;
+  }
+
+  #matrix-canvas {
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+  }
 }
 </style>
 </head>
@@ -168,7 +188,7 @@ body {
 <canvas id="reactor-fill"></canvas>
 <canvas id="matrix-canvas"></canvas>
 
-<div id="countdown-wrapper">
+<div id="countdown-container">
   <div id="countdown-label">Event starts in:</div>
   <div id="countdown">Loading...</div>
 </div>
@@ -186,15 +206,17 @@ body {
 <div class="scanlines"></div>
 
 <script>
-/* ------------------- CANVAS ------------------- */
+/* ------------------- FIXED CANVAS RESPONSIVE SIZE ------------------- */
 const canvas = document.getElementById("reactor-fill");
 const ctx = canvas.getContext("2d");
 
 let cx=210, cy=210, radius=200;
+
 function resizeCanvas(){
   const size = canvas.clientWidth;
   canvas.width = size;
   canvas.height = size;
+
   cx = size / 2;
   cy = size / 2;
   radius = size / 2 - 10;
@@ -202,7 +224,16 @@ function resizeCanvas(){
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-/* ------------------- LOGS ------------------- */
+/* ------------------- ORIGINAL SCRIPT ------------------- */
+
+const fixedStartDate = new Date("2025-12-05T00:00:00");
+const targetDate = new Date("2026-01-06T00:00:00");
+const totalDuration = targetDate - fixedStartDate;
+//const startTime = Date.now();
+//const targetDate = startTime + 530000; // 30 seconds
+//const totalDuration = 530000; // 30 seconds
+
+
 function cycleLogs(el, lines){
   let i=0;
   el._int = setInterval(()=>{
@@ -241,15 +272,20 @@ const omegaLogs = [
 cycleLogs(log1, alphaLogs);
 cycleLogs(log2, omegaLogs);
 
-/* ------------------- KONAMI ------------------- */
+/* --- X --- */
 let seq=[];
 const _k=[
-  "QXJyb3dVcA==","QXJyb3dVcA==","QXJyb3dEb3du","QXJyb3dEb3du",
-  "QXJyb3dSaWdodA==","QXJyb3dMZWZ0","RW50ZXI="
+  "QXJyb3dVcA==",
+  "QXJyb3dVcA==",
+  "QXJyb3dEb3du",
+  "QXJyb3dEb3du",
+  "QXJyb3dSaWdodA==",
+  "QXJyb3dMZWZ0",
+  "RW50ZXI="
 ];
 const konami=_k.map(x=>atob(x));
+/* --- X --- */
 
-/* ------------------- IDEATHON/HACKATHON LOGS ------------------- */
 const ideathonLogs = [
   "Project Alpha phase started",
   "Start Date - 12-Jan-2026",
@@ -274,100 +310,13 @@ const hackathonLogs = [
   "Final checks complete — good luck!"
 ];
 
-/* ------------------- WAVE & ARC ------------------- */
 function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
 
 let countdownOver=false;
 let draining=false;
 let drainProgress=0;
-let waveShift=0;
 
-function originalDrawWave(percent){
-  let eased=easeOutCubic(percent);
-  const waves=[{amp:12, wl:110, sp:0.05},{amp:8, wl:80, sp:0.07},{amp:6, wl:60, sp:0.04},{amp:4, wl:30, sp:0.1}];
-  const halfH=canvas.height/2;
-  const fillH=halfH*eased;
-  const color = countdownOver ? "#FFD700" : "#1B5287";
-  ctx.fillStyle=color;
-
-  ctx.beginPath();
-  for(let x=0;x<=canvas.width;x++){
-    let y=canvas.height-fillH;
-    waves.forEach(w=> y+=Math.sin(x/w.wl + waveShift*w.sp)*w.amp );
-    if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  }
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.lineTo(0, canvas.height);
-  ctx.fill();
-}
-
-function drawRings(){
-  ctx.strokeStyle="rgba(255,255,255,0.05)";
-  ctx.lineWidth=1;
-  for(let r=20;r<=radius;r+=20){
-    ctx.beginPath();
-    ctx.arc(cx,cy,r,0,2*Math.PI);
-    ctx.stroke();
-  }
-}
-
-function drawArc(percent){
-  const startAngle = -Math.PI / 2;
-  const phaseTime = 0.25;
-  let phase = Math.min(Math.floor(percent / phaseTime), 3);
-  let localPercent = (percent - phase * phaseTime) / phaseTime;
-  let blueEnd=0,goldEnd=0;
-
-  if(phase===0){ blueEnd=localPercent; }
-  else if(phase===1){ blueEnd=1; goldEnd=localPercent; }
-  else if(phase===2){ blueEnd=localPercent; goldEnd=1; }
-  else if(phase===3){ blueEnd=1; goldEnd=1-localPercent; }
-
-  function arc(color,end){
-    if(end<=0) return;
-    ctx.beginPath();
-    ctx.strokeStyle=color;
-    ctx.shadowColor=color;
-    ctx.shadowBlur=20;
-    ctx.lineWidth=8;
-    ctx.arc(cx,cy,radius,startAngle,startAngle + end*2*Math.PI);
-    ctx.stroke();
-  }
-
-  switch(phase){
-    case 0: arc("blue", blueEnd); break;
-    case 1: arc("blue", blueEnd); arc("gold", goldEnd); break;
-    case 2: arc("gold", goldEnd); arc("blue", blueEnd); break;
-    case 3: arc("blue", blueEnd); arc("gold", goldEnd); break;
-  }
-  ctx.shadowBlur=0;
-}
-
-function drawElevate(){
-  ctx.fillStyle="#fff";
-  ctx.font="bold "+(canvas.width*0.15)+"px Courier New";
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  ctx.shadowColor="#fff";
-  ctx.shadowBlur=20;
-  ctx.fillText("ELEVATE", cx, cy);
-}
-
-function draw(percent){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx,cy,radius,0,2*Math.PI);
-  ctx.clip();
-  waveShift+=0.06;
-  originalDrawWave(percent);
-  drawRings();
-  drawArc(percent);
-  if(percent>=1) drawElevate(); // now stays after countdown
-  ctx.restore();
-}
-
-/* ------------------- MATRIX ------------------- */
+/* MATRIX */
 let matrixActive=false;
 const matrixCanvas=document.getElementById("matrix-canvas");
 const mctx=matrixCanvas.getContext("2d");
@@ -393,14 +342,15 @@ function drawMatrix(){
   requestAnimationFrame(drawMatrix);
 }
 
-/* ------------------- KONAMI EVENT ------------------- */
 window.addEventListener("keydown", e=>{
   seq.push(e.key);
   if(seq.length>konami.length) seq.shift();
+
   if(JSON.stringify(seq)===JSON.stringify(konami)){
     alert("ERROR: Unauthorized access attempt detected.\nSystem will now restart...");
     draining=true;
     drainProgress=0;
+
     log1.parentElement.style.transform="translateX(-150vw) rotate(-30deg)";
     log2.parentElement.style.transform="translateX(150vw) rotate(30deg)";
     log1.parentElement.style.opacity=0;
@@ -408,40 +358,203 @@ window.addEventListener("keydown", e=>{
   }
 });
 
-/* ------------------- COUNTDOWN ------------------- */
+let waveShift=0;
+
+const originalDrawWave=function(percent){
+  let eased=easeOutCubic(draining ? 1-drainProgress : percent);
+  const waves=[
+    {amp:12, wl:110, sp:0.05},
+    {amp:8, wl:80, sp:0.07},
+    {amp:6, wl:60, sp:0.04},
+    {amp:4, wl:30, sp:0.1}
+  ];
+  const halfH=canvas.height/2;
+  const fillH=halfH*eased;
+  const color = countdownOver ? "#FFD700" : "#1B5287";
+  ctx.fillStyle=color;
+
+  ctx.beginPath();
+  for(let x=0;x<=canvas.width;x++){
+    let y=canvas.height-fillH;
+    waves.forEach(w=> y+=Math.sin(x/w.wl + waveShift*w.sp)*w.amp );
+    if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.fill();
+};
+
+function drawRings(){
+  ctx.strokeStyle="rgba(255,255,255,0.05)";
+  ctx.lineWidth=1;
+  for(let r=20;r<=radius;r+=20){
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,2*Math.PI);
+    ctx.stroke();
+  }
+}
+
+function drawArc(percent){
+  const startAngle = -Math.PI / 2;
+
+  const phaseTime = 0.25;
+  let phase = Math.min(Math.floor(percent / phaseTime), 3);
+  let localPercent = (percent - phase * phaseTime) / phaseTime;
+
+  let blueEnd = 0, goldEnd = 0;
+
+  if(phase === 0){ 
+    blueEnd = localPercent; 
+  }
+  else if(phase === 1){ 
+    blueEnd = 1; 
+    goldEnd = localPercent; 
+  }
+  else if(phase === 2){ 
+    blueEnd = localPercent; 
+    goldEnd = 1; 
+  }
+  else if(phase === 3){ 
+    blueEnd = 1; 
+    goldEnd = 1 - localPercent; 
+  }
+
+  if(draining){
+    blueEnd = 0;
+    goldEnd = 1 - drainProgress;
+  }
+
+  function arc(color, end){
+    if(end <= 0) return;
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 20;
+    ctx.lineWidth = 8;
+    ctx.arc(cx, cy, radius, startAngle, startAngle + end*2*Math.PI);
+    ctx.stroke();
+  }
+
+  switch(phase){
+    case 0:
+      arc("blue", blueEnd);
+      break;
+    case 1:
+      arc("blue", blueEnd);
+      arc("gold", goldEnd);
+      break;
+    case 2:
+      arc("gold", goldEnd);
+      arc("blue", blueEnd);
+      break;
+    case 3:
+      arc("blue", blueEnd);
+      arc("gold", goldEnd);
+      break;
+  }
+
+  ctx.shadowBlur = 0;
+}
+
+function drawElevate(){
+  ctx.fillStyle="#fff";
+  ctx.font="bold "+(canvas.width*0.15)+"px Courier New";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.shadowColor="#fff";
+  ctx.shadowBlur=20;
+  ctx.fillText("ELEVATE", cx, cy);
+}
+
+/* ------------------ ANIMATION PERSISTENCE FIX ------------------ */
+let visualPercent = 0;
+let lastTime = performance.now();
+
+function animateProgress(realPercent){
+  const now = performance.now();
+  const delta = (now - lastTime) / 1000;
+  lastTime = now;
+
+  const animationSpeed = 0.9;
+
+  visualPercent += (realPercent - visualPercent) * animationSpeed * delta;
+
+  if(visualPercent > 1) visualPercent = 1;
+  if(visualPercent < 0) visualPercent = 0;
+
+  return visualPercent;
+}
+
+function draw(percent){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx,cy,radius,0,2*Math.PI);
+  ctx.clip();
+
+  waveShift+=0.06;
+
+  originalDrawWave(percent);
+  drawRings();
+  drawArc(percent);
+
+  if(percent>=1 && !draining) drawElevate();
+
+  ctx.restore();
+}
+
 const countdownEl=document.getElementById("countdown");
-const countdownContainer=document.getElementById("countdown-wrapper");
-//const startTime = Date.now();
-//const targetDate = startTime + 30000; // 30 seconds
-//const totalDuration = 30000;
-  const fixedStartDate = new Date("2025-12-05T00:00:00");
-const targetDate = new Date("2026-01-06T00:00:00");
-const totalDuration = targetDate - fixedStartDate;
+const countdownContainer=document.getElementById("countdown-container");
 
 function update(){
   const now=new Date();
   let diff=targetDate-now;
   let percent=0;
 
-  if(diff<=0){ percent=1; countdownOver=true; } 
-  else { percent=1 - Math.max(0, Math.min(1, diff / totalDuration)); }
-
-  draw(percent);
-
-  if(diff>0){
-    let s=Math.floor(diff/1000);
-    let d=Math.floor(s/86400); s%=86400;
-    let h=Math.floor(s/3600); s%=3600;
-    let m=Math.floor(s/60); s%=60;
-    countdownEl.textContent=`${d}d ${h}h ${m}m ${s}s`; // single line
+  if(diff<=0){
+    percent=1;
+    countdownOver=true;
   } else {
-    countdownContainer.style.display="none"; // hide timer but keep animation
-    document.querySelector("#left-panel .panel-title").textContent="[IDEATHON]";
-    document.querySelector("#right-panel .panel-title").textContent="[HACKATHON]";
-    clearInterval(log1._int);
-    clearInterval(log2._int);
-    cycleLogs(log1, ideathonLogs);
-    cycleLogs(log2, hackathonLogs);
+    percent=1 - Math.max(0, Math.min(1, diff / totalDuration));
+  }
+
+  if(draining){
+    drainProgress+=0.003;
+    percent=Math.max(0,1-drainProgress);
+
+    if(drainProgress>=1 && !matrixActive){
+      matrixActive=true;
+      drawMatrix();
+
+      setTimeout(()=>{
+        document.body.style.transition="transform 2s ease-in";
+        document.body.style.transform="translateY(-100vh)";
+        setTimeout(()=>window.location.href="portal.html",2000);
+      },500);
+    }
+  }
+
+  /* <-- NEW: use animated visual percent instead of raw percent */
+  const visual = animateProgress(percent);
+  draw(visual);
+
+  if(!draining){
+    if(diff>0){
+      let s=Math.floor(diff/1000);
+      let d=Math.floor(s/86400); s%=86400;
+      let h=Math.floor(s/3600); s%=3600;
+      let m=Math.floor(s/60); s%=60;
+      countdownEl.textContent=`${d}d ${h}h ${m}m ${s}s`;
+    } else {
+      countdownContainer.remove();
+      document.querySelector("#left-panel .panel-title").textContent="[IDEATHON]";
+      document.querySelector("#right-panel .panel-title").textContent="[HACKATHON]";
+      clearInterval(log1._int);
+      clearInterval(log2._int);
+      cycleLogs(log1, ideathonLogs);
+      cycleLogs(log2, hackathonLogs);
+    }
   }
 
   requestAnimationFrame(update);
