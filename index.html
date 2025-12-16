@@ -14,7 +14,22 @@ body {
   font-family:"Courier New", monospace;
 }
 
-/* COUNTDOWN — REDUCED TO FIT INSIDE CIRCLE */
+/* =========================
+   REACTOR WRAPPER (NEW)
+   ========================= */
+#reactor-wrapper {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:80vw;
+  height:80vw;
+  max-width:420px;
+  max-height:420px;
+  z-index:6;
+}
+
+/* COUNTDOWN — CENTERED INSIDE CIRCLE */
 #countdown-container {
   position:absolute;
   top:50%;
@@ -23,6 +38,7 @@ body {
   text-align:center;
   z-index:50;
   color:white;
+  pointer-events:none;
 }
 
 #countdown-label {
@@ -37,17 +53,10 @@ body {
   text-shadow:0 0 10px #00ff00,0 0 20px #00ff00;
 }
 
-/* REACTOR (Responsive within constraints) */
+/* REACTOR */
 #reactor-fill {
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:80vw;
-  height:80vw;
-  max-width:420px;
-  max-height:420px;
-  transform:translate(-50%, -50%);
-  z-index:6;
+  width:100%;
+  height:100%;
   border-radius:50%;
   overflow:hidden;
 }
@@ -96,7 +105,8 @@ body {
 #matrix-canvas {
   position:absolute;
   top:0; left:0;
-  width:100%; height:100%;
+  width:100%;
+  height:100%;
   z-index:1000;
   pointer-events:none;
 }
@@ -116,7 +126,7 @@ body {
     gap:25px;
   }
 
-  #reactor-fill,
+  #reactor-wrapper,
   #left-panel,
   #right-panel {
     position:relative !important;
@@ -127,14 +137,7 @@ body {
     margin:0 auto !important;
   }
 
-  #countdown-container {
-    position:absolute !important;
-    top:50% !important;
-    left:50% !important;
-    transform:translate(-50%,-50%) !important;
-  }
-
-  #reactor-fill {
+  #reactor-wrapper {
     width:80vw !important;
     height:80vw !important;
     max-width:380px !important;
@@ -150,8 +153,7 @@ body {
   }
 
   #left-panel { order:1 !important; }
-  #reactor-fill { order:2 !important; }
-  #countdown-container { order:2 !important; }
+  #reactor-wrapper { order:2 !important; }
   #right-panel { order:3 !important; }
 
   .side-panel {
@@ -185,13 +187,17 @@ body {
 
 <body>
 
-<canvas id="reactor-fill"></canvas>
-<canvas id="matrix-canvas"></canvas>
+<!-- REACTOR + TIMER GROUP -->
+<div id="reactor-wrapper">
+  <canvas id="reactor-fill"></canvas>
 
-<div id="countdown-container">
-  <div id="countdown-label">Event starts in:</div>
-  <div id="countdown">Loading...</div>
+  <div id="countdown-container">
+    <div id="countdown-label">Event starts in:</div>
+    <div id="countdown">Loading...</div>
+  </div>
 </div>
+
+<canvas id="matrix-canvas"></canvas>
 
 <div id="left-panel" class="side-panel">
   <div class="panel-title">[NODE ALPHA]</div>
@@ -224,15 +230,13 @@ function resizeCanvas(){
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-/* ------------------- ORIGINAL SCRIPT ------------------- */
-
+/* ------------------- ORIGINAL SCRIPT (ALL FUNCTIONS) ------------------- */
 const fixedStartDate = new Date("2025-12-05T00:00:00");
 const targetDate = new Date("2026-01-06T00:00:00");
 const totalDuration = targetDate - fixedStartDate;
 //const startTime = Date.now();
-//const targetDate = startTime + 530000; // 30 seconds
-//const totalDuration = 530000; // 30 seconds
-
+//const targetDate = startTime + 30000; // 30 seconds
+//const totalDuration = 30000;
 
 function cycleLogs(el, lines){
   let i=0;
@@ -272,7 +276,6 @@ const omegaLogs = [
 cycleLogs(log1, alphaLogs);
 cycleLogs(log2, omegaLogs);
 
-/* --- X --- */
 let seq=[];
 const _k=[
   "QXJyb3dVcA==",
@@ -284,7 +287,6 @@ const _k=[
   "RW50ZXI="
 ];
 const konami=_k.map(x=>atob(x));
-/* --- X --- */
 
 const ideathonLogs = [
   "Project Alpha phase started",
@@ -292,9 +294,9 @@ const ideathonLogs = [
   "End Date - 30-Jan-2026",
   "Great ideas begin with bold steps...",
   "Your potential is unlocking...",
-  "Creativity levels rising...",
-  "You're doing amazing — keep building!",
-  "Innovation pulse strong — continue...",
+  "Creativity levels rising↑",
+  "You're doing amazing — keep building↑",
+  "Innovation pulse strong — continue>...",
   "Finalizing ideathon sequence..."
 ];
 
@@ -302,11 +304,11 @@ const hackathonLogs = [
   "Hackathon Node X initiated",
   "Start Date - 24-Feb-2026",
   "End Date - 6-March-2026",
-  "Systems ready — time to innovate!",
+  "Systems ready — time to innovate↓",
   "You’ve got this — push forward!",
   "Your logic is sharpening...",
-  "Algorithms syncing with brilliance...",
-  "Confidence high — execute boldly!",
+  "Algorithms syncing with brilliance<...",
+  "Confidence high — execute boldly↓",
   "Final checks complete — good luck!"
 ];
 
@@ -316,7 +318,7 @@ let countdownOver=false;
 let draining=false;
 let drainProgress=0;
 
-/* MATRIX */
+
 let matrixActive=false;
 const matrixCanvas=document.getElementById("matrix-canvas");
 const mctx=matrixCanvas.getContext("2d");
@@ -466,25 +468,6 @@ function drawElevate(){
   ctx.fillText("ELEVATE", cx, cy);
 }
 
-/* ------------------ ANIMATION PERSISTENCE FIX ------------------ */
-let visualPercent = 0;
-let lastTime = performance.now();
-
-function animateProgress(realPercent){
-  const now = performance.now();
-  const delta = (now - lastTime) / 1000;
-  lastTime = now;
-
-  const animationSpeed = 0.9;
-
-  visualPercent += (realPercent - visualPercent) * animationSpeed * delta;
-
-  if(visualPercent > 1) visualPercent = 1;
-  if(visualPercent < 0) visualPercent = 0;
-
-  return visualPercent;
-}
-
 function draw(percent){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -535,9 +518,7 @@ function update(){
     }
   }
 
-  /* <-- NEW: use animated visual percent instead of raw percent */
-  const visual = animateProgress(percent);
-  draw(visual);
+  draw(percent);
 
   if(!draining){
     if(diff>0){
