@@ -181,6 +181,26 @@ body {
     height:100vh !important;
   }
 }
+  @media (max-width: 768px) {
+
+  /* Ensure reactor acts as visual anchor */
+  #reactor-fill {
+    position: relative !important;
+    z-index: 5 !important;
+  }
+
+  /* Center countdown exactly over the reactor */
+  #countdown-container {
+    position: absolute !important;
+    top: calc(50% + 0px) !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 20 !important;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+  }
+}
 </style>
 </head>
 
