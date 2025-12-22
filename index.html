@@ -191,16 +191,19 @@ body {
 
   /* Reactor circle and panels relative + centered */
   #reactor-fill,
-  #left-panel,
-  #right-panel {
-    position:relative !important;
-    top:auto !important;
-    left:auto !important;
-    right:auto !important;
-    transform:none !important;
-    margin:0 auto !important; /* <-- centers horizontally */
-  }
-
+    /* ADD HERE START - Mobile panels center fix */
+#left-panel,
+#right-panel {
+    position: relative !important;  /* remove absolute positioning */
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;     /* remove any translateX/Y */
+    margin: 0 auto 20px auto !important;  /* center horizontally and add spacing */
+    width: 90vw !important;
+    max-width: 380px !important;
+}
+/* ADD HERE END */
   /* Countdown container stays over the circle */
   #countdown-container {
     position:absolute !important;
