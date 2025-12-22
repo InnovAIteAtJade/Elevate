@@ -196,14 +196,14 @@ body {
     transform: none !important;
     width: 80vw;
     max-width: 380px;
+    margin: 0 auto;          /* center horizontally */
   }
 
   #reactor-fill {
     width: 100% !important;
     height: auto !important;
-    max-width: 380px;
-    border-radius: 50%;
     display: block;
+    border-radius: 50%;
   }
   
  /* #reactor-fill {
@@ -230,19 +230,20 @@ body {
     z-index: 50;
   } */
 
-  #countdown-container {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+   #countdown-container {
+    position: absolute !important; /* keep it inside the circle */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
     white-space: nowrap;
+    text-align: center;
     z-index: 50;
   }
+}
 
   #countdown-label {
     font-size: 4vw !important;
