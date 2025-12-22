@@ -245,17 +245,24 @@ body {
   white-space: nowrap;
 }
   
+#countdown-label {
+  white-space: nowrap;
+}
+/* ADD HERE: center log panels on mobile */
 @media (max-width: 768px) {
   #left-panel,
   #right-panel {
+    position: relative !important;
+    top: auto !important;
     left: auto !important;
     right: auto !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    transform: none !important;
+    margin: 20px auto !important; /* center horizontally */
   }
-}
-#countdown-label {
-  white-space: nowrap;
+
+  .side-panel {
+    text-align: center; /* optional: center text inside panels */
+  }
 }
 
 
