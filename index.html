@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
 <title>Coming Soon</title>
 
 <style>
@@ -201,18 +204,59 @@ body {
     pointer-events: none;
   }
 }
+  /* =========================
+   ADD-ONLY MOBILE CENTER FIX
+   ========================= */
+
+#reactor-anchor {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:6;
+}
+
+#reactor-anchor #countdown-container {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+/* iPhone safe-area support */
+body {
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+@media (max-width:768px) {
+  #reactor-anchor {
+    position:relative;
+    transform:none;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
-<canvas id="reactor-fill"></canvas>
+<div id="reactor-anchor">
+  <canvas id="reactor-fill"></canvas>
+
+  <div id="countdown-container">
+    <div id="countdown-label">Event starts in:</div>
+    <div id="countdown">Loading...</div>
+  </div>
+</div>
+
 <canvas id="matrix-canvas"></canvas>
 
-<div id="countdown-container">
-  <div id="countdown-label">Event starts in:</div>
-  <div id="countdown">Loading...</div>
-</div>
 
 <div id="left-panel" class="side-panel">
   <div class="panel-title">[NODE ALPHA]</div>
