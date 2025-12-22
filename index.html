@@ -183,13 +183,12 @@ body {
   body {
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: center !important;   /* center horizontally */
     justify-content: flex-start !important;
+    height: auto !important;
     overflow: auto !important;
-    height: 100vh !important;
     padding: 20px env(safe-area-inset-right) 20px env(safe-area-inset-left);
     gap: 25px;
-    background: black;
   }
 
   #reactor-anchor {
@@ -205,10 +204,18 @@ body {
     max-width: 380px;
     border-radius: 50%;
     display: block;
-    z-index: 5 !important;
   }
+  
+ /* #reactor-fill {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 380px;
+    border-radius: 50%;
+    display: block;
+    z-index: 5 !important;
+  }*/
 
-  #countdown-container {
+/*  #countdown-container {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
@@ -221,6 +228,20 @@ body {
     white-space: nowrap;
     text-align: centre;
     z-index: 50;
+  } */
+
+  #countdown-container {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 50;
   }
 
   #countdown-label {
@@ -231,7 +252,7 @@ body {
     font-size: 7vw !important;
   }
 
-  #left-panel,
+  /*#left-panel,
   #right-panel {
     position: relative !important;
     top: auto !important;
@@ -253,6 +274,33 @@ body {
   .panel-title {
     font-size: 4.5vw !important;
     margin-bottom: 10px;
+  }
+
+  .panel-log {
+    height: 150px !important;
+    font-size: 3.8vw !important;
+    overflow-y: auto;
+  }*/
+  #left-panel,
+  #right-panel {
+    position: relative !important;  /* remove absolute positioning */
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin: 20px auto !important;   /* center horizontally */
+    width: 90vw !important;
+    max-width: 380px;
+  }
+
+  .side-panel {
+    text-align: center !important;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .panel-title {
+    font-size: 4.5vw !important;
   }
 
   .panel-log {
