@@ -191,12 +191,12 @@ body {
     gap: 25px;
   }
 
-  #reactor-anchor {
+/*  #reactor-anchor {
     position: relative !important;
     transform: none !important;
     width: 80vw;
     max-width: 380px;
-    margin: 0 auto;          /* center horizontally */
+    margin: 0 auto;          /* center horizontally 
   }
 
   #reactor-fill {
@@ -228,10 +228,41 @@ body {
     white-space: nowrap;
     text-align: centre;
     z-index: 50;
-  } */
+  } 
 
    #countdown-container {
-    position: absolute !important; /* keep it inside the circle */
+    position: absolute !important; /* keep it inside the circle 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-align: center;
+    z-index: 50;
+  }*/
+
+  @media (max-width: 768px) {
+  #reactor-anchor {
+    position: relative !important;
+    width: 80vw;
+    max-width: 380px;
+    margin: 0 auto 30px auto; /* center horizontally + bottom margin */
+    aspect-ratio: 1 / 1;      /* ensures height = width */
+  }
+
+  #reactor-fill {
+    width: 100% !important;
+    height: 100% !important;  /* fills square parent */
+    display: block;
+    border-radius: 50%;
+  }
+
+  /* Countdown stays centered inside reactor */
+  #countdown-container {
+    position: absolute !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -243,6 +274,8 @@ body {
     text-align: center;
     z-index: 50;
   }
+}
+
 
   #countdown-label {
     font-size: 4vw !important;
