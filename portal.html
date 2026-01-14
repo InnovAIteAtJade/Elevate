@@ -63,7 +63,6 @@ canvas {
     cursor: pointer;
 }
 
-/* Hidden clickable game box (position removed — inserted secretly via JS) */
 #hiddenGameBox {
     position: absolute;
     width: 60px;
@@ -85,11 +84,10 @@ canvas {
     <button id="submitBtn">ENTER</button>
 </div>
 
-
 <div id="hiddenGameBox"></div>
 
 <script>
-// MATRIX RAIN
+
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
@@ -115,13 +113,10 @@ function drawMatrix() {
 }
 setInterval(drawMatrix, 50);
 
-/* ======================================================
-   
-   ====================================================== */
 
-const _p = "SUgyMDI2";         // 
-const _core = "Y29yZS5odG1s";   // 
-const _game = "Z2FtZS5odG1s";   // 
+const _p = "SUgyMDI2";            
+const _core = "Y29yZS5odG1s";          
+const _game = "U2lnbmFsIEhhcm1vbml6ZXIuaHRtbA=="; 
 
 document.getElementById("submitBtn").addEventListener("click", ()=>{
     const pass = document.getElementById("passwordInput").value;
@@ -132,7 +127,6 @@ document.getElementById("submitBtn").addEventListener("click", ()=>{
     }
 });
 
-
 let _c = 0;
 document.getElementById("hiddenGameBox").addEventListener("click", ()=>{
     _c++;
@@ -141,23 +135,13 @@ document.getElementById("hiddenGameBox").addEventListener("click", ()=>{
     }
 });
 
-/* ======================================================
-  
-   ====================================================== */
-
-
 const _hx = "NzAl";   // "70%"
 const _hy = "MjUl";   // "25%"
 
 const box = document.getElementById("hiddenGameBox");
 box.style.top = atob(_hx);
 box.style.left = atob(_hy);
-
-/* ======================================================
-  
-   ====================================================== */
 </script>
 
 </body>
 </html>
-
