@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNAL HARMONIZER</title>
+<style>
+    body {
+        margin: 0;
+        background: #050505;
+        color: #00ff41;
+        font-family: "Courier New", monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+        user-select: none;
+    }
+
+    h2 {
+        margin: 0 0 10px 0;
+        text-shadow: 0 0 10px #00ff41;
+        letter-spacing: 2px;
+    }
+
+    #visualizer {
+        border: 2px solid #333;
+        background: #000;
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .controls {
+        width: 80%;
+        max-width: 600px;
+        background: #111;
+        padding: 20px;
+        border: 1px solid #333;
+    }
+
+    .slider-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type=range] {
+        width: 100%;
+        background: transparent;
+        -webkit-appearance: none;
+        margin: 10px 0;
+    }
+
+    input[type=range]:focus {
+        outline: none;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        cursor: pointer;
+        background: #333;
+        border-radius: 2px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        height: 20px;
+        width: 10px;
+        border-radius: 2px;
+        background: #00ff41;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -8px;
+        box-shadow: 0 0 10px #00ff41;
+    }
+
+    #status {
+        height: 20px;
+        color: #ff3333;
+        text-align: center;
+        margin-top: 10px;
+        font-weight: bold;
+        text-shadow: 0 0 5px #ff3333;
+    }
+
+    .locked {
+        color: #00ff41 !important;
+        text-shadow: 0 0 10px #00ff41 !important;
+    }
+
+    #overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1s;
+    }
+
+    .btn {
+        background: #00ff41;
+        color: #000;
+        border: none;
+        padding: 15px 30px;
+        font-family: inherit;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn:hover {
+        background: #fff;
+        box-shadow: 0 0 20px #00ff41;
+    }
+
+    /* CRT Scanline effect */
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: repeating-linear-gradient(
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 255, 65, 0.05) 3px
+        );
+        pointer-events: none;
+        z-index: 5;
+    }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<h2>SIGNAL INTERCEPTOR</h2>
+<div id="visualizer-container" style="position:relative;">
+    <canvas id="visualizer" width="600" height="300"></canvas>
+    <div id="overlay">
+        <h1 class="locked">SIGNAL HARMONIZED</h1>
+        <p>Phase 1 Complete.</p>
+        <button id="btn-proceed" class="btn">PROCEED TO FIREWALL</button>
+    </div>
+</div>
+
+<div class="controls">
+    <div id="status">STATUS: NO CARRIER</div>
+    
+    <div class="slider-group">
+        <label>FREQUENCY <span id="freq-val">00</span></label>
+        <input type="range" id="freq" min="1" max="100" value="50">
+    </div>
+
+    <div class="slider-group">
+        <label>AMPLITUDE <span id="amp-val">00</span></label>
+        <input type="range" id="amp" min="1" max="100" value="10">
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    const centerY = h / 2;
+
+    const freqInput = document.getElementById('freq');
+    const ampInput = document.getElementById('amp');
+    const statusEl = document.getElementById('status');
+    const overlay = document.getElementById('overlay');
+
+    const targetFreq = Math.floor(Math.random() * 60) + 20; 
+    const targetAmp = Math.floor(Math.random() * 60) + 20;  
+
+    let lockStartTime = 0;
+    let isLocked = false;
+    let noiseOffset = 0;
+    
+    
+    const _next = "SGV4LUdyaWQgRmlyZXdhbGwuaHRtbA==";
+
+    document.getElementById('btn-proceed').addEventListener('click', () => {
+        window.location.href = atob(_next);
+    });
+
+    function drawWave(freq, amp, color, phaseShift, isNoise) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+
+        for (let x = 0; x < w; x++) {
+            let y = centerY + Math.sin(x * (freq * 0.002) + phaseShift) * (amp * 1.5);
+            if(isNoise) y += (Math.random() - 0.5) * 10;
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let i=0; i<w; i+=40) { ctx.moveTo(i,0); ctx.lineTo(i,h); }
+        for(let i=0; i<h; i+=40) { ctx.moveTo(0,i); ctx.lineTo(w,i); }
+        ctx.stroke();
+
+        let time = Date.now() * 0.005;
+        drawWave(targetFreq, targetAmp, 'rgba(0, 255, 65, 0.4)', time, false);
+
+        let userFreq = parseInt(freqInput.value);
+        let userAmp = parseInt(ampInput.value);
+        let freqDiff = Math.abs(targetFreq - userFreq);
+        let ampDiff = Math.abs(targetAmp - userAmp);
+        let isClose = freqDiff < 5 && ampDiff < 5;
+        let isPerfect = freqDiff < 2 && ampDiff < 2;
+
+        let waveColor = isClose ? '#FFFF00' : '#FF0000'; 
+        if(isLocked) waveColor = '#FFFFFF'; 
+
+        noiseOffset += 0.1;
+        drawWave(userFreq, userAmp, waveColor, time - (freqDiff * 0.05), !isClose);
+
+        if (isPerfect && !isLocked) {
+            if (lockStartTime === 0) lockStartTime = Date.now();
+            let progress = Date.now() - lockStartTime;
+            statusEl.textContent = `SIGNAL LOCKING... ${(progress/20).toFixed(0)}%`;
+            statusEl.className = "locked";
+
+            if (progress > 2000) {
+                isLocked = true;
+                success();
+            }
+        } else {
+            if(!isLocked) {
+                lockStartTime = 0;
+                statusEl.textContent = "STATUS: NO CARRIER";
+                statusEl.className = "";
+            }
+        }
+        requestAnimationFrame(loop);
+    }
+
+    function success() {
+        statusEl.textContent = "STATUS: CONNECTION ESTABLISHED";
+        overlay.style.pointerEvents = "all";
+        overlay.style.opacity = 1;
+    }
+    loop();
+</script>
+</body>
+</html>
