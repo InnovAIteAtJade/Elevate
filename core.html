@@ -8,7 +8,7 @@
 body {
     margin:0;
     background:white;
-    color:#1B5287; /* text color changed */
+    color:#1B5287;
     font-family:"Courier New", monospace;
     display:flex;
     justify-content:center;
@@ -24,8 +24,8 @@ body {
     opacity:0;
     margin:8px 0;
     font-size:2rem;
-    color:#1B5287; /* text color changed */
-    text-shadow: 0 0 5px #1B5287, 0 0 10px #1B5287, 0 0 15px #1B5287; /* glow changed */
+    color:#1B5287;
+    text-shadow: 0 0 5px #1B5287, 0 0 10px #1B5287, 0 0 15px #1B5287;
 }
 </style>
 </head>
@@ -37,16 +37,20 @@ body {
     <p></p>
     <p></p>
     <p></p>
+    <p></p>
 </div>
 
 <script>
 // TYPING ANIMATION
+const _hi = "SGFja0lkZWE="; // Obfuscated "HackIdea"
+
 const lines = [
     "ACCESS GRANTED",
     "Initializing CORE Systems...",
     "Decrypting Authentication...",
     "Loading Secure Channels...",
-    "Welcome, Agent."
+    "Welcome, Agent.",
+    "Please submit <b>" + atob(_hi) + "</b> to Win"
 ];
 
 function startTyping() {
@@ -54,16 +58,37 @@ function startTyping() {
     let currentLine = 0;
 
     function typeLine() {
+        if (currentLine >= lines.length) return;
+
         const lineEl = container.children[currentLine];
+        lineEl.style.opacity = 1; // Make visible immediately so we see the typing
         let charIndex = 0;
+        let currentText = ""; // Accumulator for innerHTML
 
         function typeChar() {
             if(charIndex < lines[currentLine].length){
-                lineEl.textContent += lines[currentLine][charIndex];
+                const char = lines[currentLine][charIndex];
+                
+                // Check for HTML tag start
+                if (char === '<') {
+                    const closingIndex = lines[currentLine].indexOf('>', charIndex);
+                    if (closingIndex !== -1) {
+                        // Extract the full tag (e.g., "<b>")
+                        const tag = lines[currentLine].substring(charIndex, closingIndex + 1);
+                        currentText += tag;
+                        charIndex = closingIndex + 1;
+                        lineEl.innerHTML = currentText;
+                        // Recursively call immediately to type the next visible character without delay
+                        typeChar(); 
+                        return;
+                    }
+                }
+
+                currentText += char;
+                lineEl.innerHTML = currentText;
                 charIndex++;
                 setTimeout(typeChar, 80);
             } else {
-                lineEl.style.opacity = 1;
                 currentLine++;
                 if(currentLine < lines.length){
                     setTimeout(typeLine, 300);
