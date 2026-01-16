@@ -25,15 +25,6 @@
 </style>
 </head>
 <body>
-
-<script>
-if(sessionStorage.getItem("ALLOW_HEX")!=="true"){
-    document.documentElement.innerHTML="";
-    throw new Error();
-}
-sessionStorage.removeItem("ALLOW_HEX");
-</script>
-
 <div id="container">
     <h1>FIREWALL://HEX_GRID</h1>
     <div class="grid" id="grid"></div>
@@ -52,10 +43,8 @@ sessionStorage.removeItem("ALLOW_HEX");
         <button id="btn-proceed" class="btn">PROCEED TO CIRCUIT</button>
     </div>
 </div>
-
 <script>
-(()=>{const g=document.getElementById('grid'),m=document.getElementById('message'),l=document.getElementById('level-display'),s=document.getElementById('status-text'),t=document.getElementById('traceback-fill'),w=document.getElementById('win-modal');const rows=5,cols=5;let cells=[],hex="0123456789ABCDEF",level=1,max=3,seq=[],idx=0,playing=false,tracebackVal=0,interval=null;const target="Q2lyY3VpdC5odG1s";document.getElementById('btn-proceed').addEventListener('click',()=>{window.location.href=atob(target)});function rnd(){return hex[Math.floor(Math.random()*hex.length)]+hex[Math.floor(Math.random()*hex.length)]}function initGrid(){for(let i=0;i<rows*cols;i++){let c=document.createElement('div');c.classList.add('cell');c.textContent=rnd();c.dataset.idx=i;c.addEventListener('click',onClick);g.appendChild(c);cells.push(c)}}function startGame(){level=1;tracebackVal=0;updateUI();startLevel()}function startLevel(){if(interval)clearInterval(interval);idx=0;seq=[];updateUI();for(let i=0;i<4+level;i++)seq.push(Math.floor(Math.random()*(rows*cols)));playing=true;s.textContent="OBSERVE";s.style.color="#ffff00";m.textContent="Pattern incoming...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;s.textContent="INPUT";s.style.color="#00e5ff";m.textContent="Repeat sequence.";return}flash(seq[i]);i++},800)}function flash(i){cells[i].classList.add('active');setTimeout(()=>cells[i].classList.remove('active'),500)}function onClick(e){if(playing)return;let i=parseInt(e.target.dataset.idx);if(i===seq[idx]){flash(i);idx++;if(idx===seq.length){playing=true;m.textContent="Sequence Accepted.";level++;setTimeout(level>max?win:startLevel,500)}}else{playing=true;e.target.classList.add('error');document.getElementById('container').classList.add('shake');setTimeout(()=>{e.target.classList.remove('error');document.getElementById('container').classList.remove('shake')},500);tracebackVal+=34;t.style.width=tracebackVal+"%";m.textContent="PATTERN MISMATCH DETECTED";tracebackVal>=100?setTimeout(startGame,2000):setTimeout(replay,1000)}}function replay(){idx=0;m.textContent="Re-displaying pattern...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;m.textContent="Repeat sequence."}else flash(seq[i++])},600)}function updateUI(){l.textContent=`LVL: ${level}/${max}`;t.style.width=tracebackVal+"%"}function win(){w.style.display="flex"}initGrid();setTimeout(startGame,1000)})();
+(()=>{const g=document.getElementById('grid'),m=document.getElementById('message'),l=document.getElementById('level-display'),s=document.getElementById('status-text'),t=document.getElementById('traceback-fill'),w=document.getElementById('win-modal');const rows=5,cols=5;let cells=[],hex="0123456789ABCDEF",level=1,max=3,seq=[],idx=0,playing=false,tracebackVal=0,interval=null;const target="TG9naWMgR2F0ZSBCeXBhc3MuaHRtbA==";document.getElementById('btn-proceed').addEventListener('click',()=>{window.location.href=atob(target)});function rnd(){return hex[Math.floor(Math.random()*hex.length)]+hex[Math.floor(Math.random()*hex.length)]}function initGrid(){for(let i=0;i<rows*cols;i++){let c=document.createElement('div');c.classList.add('cell');c.textContent=rnd();c.dataset.idx=i;c.addEventListener('click',onClick);g.appendChild(c);cells.push(c)}}function startGame(){level=1;tracebackVal=0;updateUI();startLevel()}function startLevel(){if(interval)clearInterval(interval);idx=0;seq=[];updateUI();for(let i=0;i<4+level;i++)seq.push(Math.floor(Math.random()*(rows*cols)));playing=true;s.textContent="OBSERVE";s.style.color="#ffff00";m.textContent="Pattern incoming...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;s.textContent="INPUT";s.style.color="#00e5ff";m.textContent="Repeat sequence.";return}flash(seq[i]);i++},800)}function flash(i){cells[i].classList.add('active');setTimeout(()=>cells[i].classList.remove('active'),500)}function onClick(e){if(playing)return;let i=parseInt(e.target.dataset.idx);if(i===seq[idx]){flash(i);idx++;if(idx===seq.length){playing=true;m.textContent="Sequence Accepted.";level++;setTimeout(level>max?win:startLevel,500)}}else{playing=true;e.target.classList.add('error');document.getElementById('container').classList.add('shake');setTimeout(()=>{e.target.classList.remove('error');document.getElementById('container').classList.remove('shake')},500);tracebackVal+=34;t.style.width=tracebackVal+"%";m.textContent="PATTERN MISMATCH DETECTED";tracebackVal>=100?setTimeout(startGame,2000):setTimeout(replay,1000)}}function replay(){idx=0;m.textContent="Re-displaying pattern...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;m.textContent="Repeat sequence."}else flash(seq[i++])},600)}function updateUI(){l.textContent=`LVL: ${level}/${max}`;t.style.width=tracebackVal+"%"}function win(){w.style.display="flex"}initGrid();setTimeout(startGame,1000)})();
 </script>
-
 </body>
 </html>
