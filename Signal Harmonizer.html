@@ -25,6 +25,14 @@ input[type=range]::-webkit-slider-thumb{height:20px;width:10px;border-radius:2px
 </head>
 <body>
 
+<script>
+if(sessionStorage.getItem("ALLOW_SIGNAL")!=="true"){
+document.documentElement.innerHTML="";
+throw new Error();
+}
+sessionStorage.removeItem("ALLOW_SIGNAL");
+</script>
+
 <div class="x"></div>
 
 <h2>SIGNAL INTERCEPTOR</h2>
@@ -50,7 +58,36 @@ input[type=range]::-webkit-slider-thumb{height:20px;width:10px;border-radius:2px
 </div>
 </div>
 
-<script>(()=>{let d=document,$=d.getElementById.bind(d),c=$("v"),x=c.getContext("2d"),W=c.width,H=c.height,Y=H/2,f=$("f"),a=$("a"),s=$("s"),o=$("o"),R=()=>Math.floor(Math.random()*60)+20,tf=R(),ta=R(),t0=0,L=0,N=atob("SGV4LUdyaWQgRmlyZXdhbGwuaHRtbA==");$("p").onclick=()=>location.href=N;let wv=(F,A,C,P,N)=>{x.beginPath();x.strokeStyle=C;x.lineWidth=3;x.shadowBlur=5;x.shadowColor=C;for(let i=0;i<W;i++){let y=Y+Math.sin(i*(F*.002)+P)*(A*1.5);if(N)y+=(Math.random()-.5)*10;i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke();x.shadowBlur=0};(function loop(){x.clearRect(0,0,W,H);x.strokeStyle="#111";x.lineWidth=1;x.beginPath();for(let i=0;i<W;i+=40)x.moveTo(i,0),x.lineTo(i,H);for(let i=0;i<H;i+=40)x.moveTo(0,i),x.lineTo(W,i);x.stroke();let T=Date.now()*.005,uf=+f.value,ua=+a.value,df=Math.abs(tf-uf),da=Math.abs(ta-ua),C=df<5&&da<5,P=df<2&&da<2;wv(tf,ta,"rgba(0,255,65,.4)",T,0);wv(uf,ua,L?"#fff":C?"#ff0":"#f00",T-df*.05,!C);if(P&&!L){t0||(t0=Date.now());let q=Date.now()-t0;s.textContent="SIGNAL LOCKING... "+(q/20|0)+"%";s.className="l";q>2e3&&(L=1,s.textContent="STATUS: CONNECTION ESTABLISHED",o.style.opacity=1,o.style.pointerEvents="all")}else if(!L)t0=0,s.textContent="STATUS: NO CARRIER",s.className="";requestAnimationFrame(loop)})();})();</script>
+<script>(()=>{let d=document,$=d.getElementById.bind(d),c=$("v"),x=c.getContext("2d"),W=c.width,H=c.height,Y=H/2,f=$("f"),a=$("a"),s=$("s"),o=$("o"),R=()=>Math.floor(Math.random()*60)+20,tf=R(),ta=R(),t0=0,L=0,N=atob("SGV4LUdyaWQgRmlyZXdhbGwuaHRtbA==");
+$("p").onclick=()=>{
+sessionStorage.setItem("ALLOW_HEX","true");
+location.href=N;
+};
+let wv=(F,A,C,P,N)=>{x.beginPath();x.strokeStyle=C;x.lineWidth=3;x.shadowBlur=5;x.shadowColor=C;for(let i=0;i<W;i++){let y=Y+Math.sin(i*(F*.002)+P)*(A*1.5);if(N)y+=(Math.random()-.5)*10;i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke();x.shadowBlur=0};
+(function loop(){
+x.clearRect(0,0,W,H);
+x.strokeStyle="#111";x.lineWidth=1;
+x.beginPath();
+for(let i=0;i<W;i+=40)x.moveTo(i,0),x.lineTo(i,H);
+for(let i=0;i<H;i+=40)x.moveTo(0,i),x.lineTo(W,i);
+x.stroke();
+let T=Date.now()*.005,uf=+f.value,ua=+a.value,df=Math.abs(tf-uf),da=Math.abs(ta-ua),C=df<5&&da<5,P=df<2&&da<2;
+wv(tf,ta,"rgba(0,255,65,.4)",T,0);
+wv(uf,ua,L?"#fff":C?"#ff0":"#f00",T-df*.05,!C);
+if(P&&!L){
+t0||(t0=Date.now());
+let q=Date.now()-t0;
+s.textContent="SIGNAL LOCKING... "+(q/20|0)+"%";
+s.className="l";
+q>2000&&(L=1,s.textContent="STATUS: CONNECTION ESTABLISHED",o.style.opacity=1,o.style.pointerEvents="all");
+}else if(!L){
+t0=0;
+s.textContent="STATUS: NO CARRIER";
+s.className="";
+}
+requestAnimationFrame(loop);
+})();
+})();</script>
 
 </body>
 </html>
