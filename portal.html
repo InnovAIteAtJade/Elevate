@@ -16,7 +16,13 @@ canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 </style>
 </head>
 <body>
-
+<script>
+if(sessionStorage.getItem("ALLOW_PORTAL")!=="true"){
+document.documentElement.innerHTML="";
+throw new Error();
+}
+sessionStorage.removeItem("ALLOW_PORTAL");
+</script>
 <canvas id="matrix"></canvas>
 
 <div id="portal-container">
@@ -63,3 +69,4 @@ e.clipboardData.setData("text/plain",r)
 
 </body>
 </html>
+
