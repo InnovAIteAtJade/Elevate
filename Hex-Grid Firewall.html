@@ -5,124 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FIREWALL BREACH</title>
 <style>
-    body {
-        margin: 0;
-        background: #000;
-        color: #00e5ff;
-        font-family: "Courier New", monospace;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        overflow: hidden;
-    }
-    #container {
-        position: relative;
-        padding: 20px;
-        border: 1px solid #1B5287;
-        background: rgba(0, 20, 40, 0.8);
-        box-shadow: 0 0 30px rgba(0, 229, 255, 0.1);
-    }
-    h1 {
-        margin: 0 0 15px 0;
-        font-size: 1.5rem;
-        text-align: center;
-        text-shadow: 0 0 10px #00e5ff;
-    }
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(5, 50px);
-        grid-template-rows: repeat(5, 50px);
-        gap: 5px;
-    }
-    .cell {
-        width: 50px;
-        height: 50px;
-        background: rgba(0, 229, 255, 0.1);
-        border: 1px solid #00e5ff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.1s;
-        user-select: none;
-    }
-    .cell:hover {
-        background: rgba(0, 229, 255, 0.3);
-    }
-    .cell.active {
-        background: #00e5ff;
-        color: #000;
-        box-shadow: 0 0 15px #00e5ff;
-    }
-    .cell.error {
-        background: #ff0000;
-        border-color: #ff0000;
-        box-shadow: 0 0 15px #ff0000;
-    }
-    #info-panel {
-        margin-top: 20px;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        font-size: 1.1rem;
-    }
-    #message {
-        margin-top: 10px;
-        height: 20px;
-        color: #ffcc00;
-        text-align: center;
-        font-weight: bold;
-    }
-    #traceback-container {
-        width: 100%;
-        height: 4px;
-        background: #333;
-        margin-top: 15px;
-        position: relative;
-    }
-    #traceback-fill {
-        width: 0%;
-        height: 100%;
-        background: #ff0000;
-        transition: width 0.3s;
-    }
-    #traceback-label {
-        font-size: 0.7rem;
-        color: #ff0000;
-        margin-top: 2px;
-        text-align: right;
-    }
-    #win-modal {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95);
-        display: none;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 20;
-    }
-    .btn {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background: #00e5ff;
-        color: #000;
-        border: none;
-        font-weight: bold;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    @keyframes shake {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
-        100% { transform: translateX(0); }
-    }
-    .shake { animation: shake 0.3s; }
+    body {margin:0;background:#000;color:#00e5ff;font-family:"Courier New",monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden;}
+    #container {position:relative;padding:20px;border:1px solid #1B5287;background:rgba(0,20,40,0.8);box-shadow:0 0 30px rgba(0,229,255,0.1);}
+    h1 {margin:0 0 15px 0;font-size:1.5rem;text-align:center;text-shadow:0 0 10px #00e5ff;}
+    .grid {display:grid;grid-template-columns:repeat(5,50px);grid-template-rows:repeat(5,50px);gap:5px;}
+    .cell {width:50px;height:50px;background:rgba(0,229,255,0.1);border:1px solid #00e5ff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;cursor:pointer;transition:all 0.1s;user-select:none;}
+    .cell:hover {background:rgba(0,229,255,0.3);}
+    .cell.active {background:#00e5ff;color:#000;box-shadow:0 0 15px #00e5ff;}
+    .cell.error {background:#ff0000;border-color:#ff0000;box-shadow:0 0 15px #ff0000;}
+    #info-panel {margin-top:20px;width:100%;display:flex;justify-content:space-between;font-size:1.1rem;}
+    #message {margin-top:10px;height:20px;color:#ffcc00;text-align:center;font-weight:bold;}
+    #traceback-container {width:100%;height:4px;background:#333;margin-top:15px;position:relative;}
+    #traceback-fill {width:0%;height:100%;background:#ff0000;transition:width 0.3s;}
+    #traceback-label {font-size:0.7rem;color:#ff0000;margin-top:2px;text-align:right;}
+    #win-modal {position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:20;}
+    .btn {margin-top:20px;padding:10px 20px;background:#00e5ff;color:#000;border:none;font-weight:bold;text-decoration:none;cursor:pointer;}
+    @keyframes shake {0%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
+    .shake {animation:shake 0.3s;}
 </style>
 </head>
 <body>
@@ -145,152 +44,7 @@
     </div>
 </div>
 <script>
-    const gridEl = document.getElementById('grid');
-    const msgEl = document.getElementById('message');
-    const levelEl = document.getElementById('level-display');
-    const statusEl = document.getElementById('status-text');
-    const tbFill = document.getElementById('traceback-fill');
-    const winModal = document.getElementById('win-modal');
-    const rows = 5;
-    const cols = 5;
-    let cells = [];
-    const hexChars = "0123456789ABCDEF";
-    let level = 1;
-    const maxLevels = 3;
-    let sequence = [];
-    let playerIndex = 0;
-    let isPlayingSequence = false;
-    let traceback = 0; 
-    let currentInterval = null;
-
-    // Updated redirect target: "Logic Gate Bypass.html" encoded in Base64
-    const _targ = "TG9naWMgR2F0ZSBCeXBhc3MuaHRtbA==";
-    
-    document.getElementById('btn-proceed').addEventListener('click', () => {
-        window.location.href = atob(_targ);
-    });
-
-    function initGrid() {
-        for(let i=0; i<rows*cols; i++) {
-            const div = document.createElement('div');
-            div.classList.add('cell');
-            div.textContent = getRandomHex();
-            div.dataset.index = i;
-            div.addEventListener('click', onCellClick);
-            gridEl.appendChild(div);
-            cells.push(div);
-        }
-    }
-
-    function getRandomHex() {
-        return hexChars[Math.floor(Math.random() * hexChars.length)] + 
-               hexChars[Math.floor(Math.random() * hexChars.length)];
-    }
-
-    function startGame() {
-        level = 1;
-        traceback = 0;
-        updateUI();
-        startLevel();
-    }
-
-    function startLevel() {
-        if (currentInterval) clearInterval(currentInterval);
-        playerIndex = 0;
-        sequence = [];
-        updateUI();
-        let seqLength = 4 + level; 
-        for(let i=0; i<seqLength; i++) {
-            sequence.push(Math.floor(Math.random() * (rows*cols)));
-        }
-        isPlayingSequence = true;
-        statusEl.textContent = "OBSERVE";
-        statusEl.style.color = "#ffff00";
-        msgEl.textContent = "Pattern incoming...";
-        let i = 0;
-        currentInterval = setInterval(() => {
-            if(i >= sequence.length) {
-                clearInterval(currentInterval);
-                isPlayingSequence = false;
-                statusEl.textContent = "INPUT";
-                statusEl.style.color = "#00e5ff";
-                msgEl.textContent = "Repeat sequence.";
-                return;
-            }
-            flashCell(sequence[i]);
-            i++;
-        }, 800);
-    }
-
-    function flashCell(index) {
-        const cell = cells[index];
-        cell.classList.add('active');
-        setTimeout(() => {
-            cell.classList.remove('active');
-        }, 500);
-    }
-
-    function onCellClick(e) {
-        if(isPlayingSequence) return;
-        const index = parseInt(e.target.dataset.index);
-        if(index === sequence[playerIndex]) {
-            flashCell(index);
-            playerIndex++;
-            if(playerIndex === sequence.length) {
-                isPlayingSequence = true;
-                msgEl.textContent = "Sequence Accepted.";
-                level++;
-                if(level > maxLevels) {
-                    setTimeout(winGame, 500);
-                } else {
-                    setTimeout(startLevel, 1500);
-                }
-            }
-        } else {
-            isPlayingSequence = true;
-            e.target.classList.add('error');
-            document.getElementById('container').classList.add('shake');
-            setTimeout(() => {
-                e.target.classList.remove('error');
-                document.getElementById('container').classList.remove('shake');
-            }, 500);
-            traceback += 34; 
-            tbFill.style.width = traceback + "%";
-            msgEl.textContent = "PATTERN MISMATCH DETECTED";
-            if(traceback >= 100) {
-                msgEl.textContent = "CONNECTION TERMINATED. RETRYING...";
-                setTimeout(startGame, 2000);
-            } else {
-                setTimeout(() => {
-                    playerIndex = 0;
-                    msgEl.textContent = "Re-displaying pattern...";
-                    let i = 0;
-                    currentInterval = setInterval(() => {
-                        if(i >= sequence.length) {
-                            clearInterval(currentInterval);
-                            isPlayingSequence = false;
-                            msgEl.textContent = "Repeat sequence.";
-                            return;
-                        }
-                        flashCell(sequence[i]);
-                        i++;
-                    }, 600);
-                }, 1000);
-            }
-        }
-    }
-
-    function updateUI() {
-        levelEl.textContent = `LVL: ${level}/${maxLevels}`;
-        tbFill.style.width = traceback + "%";
-    }
-
-    function winGame() {
-        winModal.style.display = "flex";
-    }
-
-    initGrid();
-    setTimeout(startGame, 1000);
+(()=>{const g=document.getElementById('grid'),m=document.getElementById('message'),l=document.getElementById('level-display'),s=document.getElementById('status-text'),t=document.getElementById('traceback-fill'),w=document.getElementById('win-modal');const rows=5,cols=5;let cells=[],hex="0123456789ABCDEF",level=1,max=3,seq=[],idx=0,playing=false,tracebackVal=0,interval=null;const target="TG9naWMgR2F0ZSBCeXBhc3MuaHRtbA==";document.getElementById('btn-proceed').addEventListener('click',()=>{window.location.href=atob(target)});function rnd(){return hex[Math.floor(Math.random()*hex.length)]+hex[Math.floor(Math.random()*hex.length)]}function initGrid(){for(let i=0;i<rows*cols;i++){let c=document.createElement('div');c.classList.add('cell');c.textContent=rnd();c.dataset.idx=i;c.addEventListener('click',onClick);g.appendChild(c);cells.push(c)}}function startGame(){level=1;tracebackVal=0;updateUI();startLevel()}function startLevel(){if(interval)clearInterval(interval);idx=0;seq=[];updateUI();for(let i=0;i<4+level;i++)seq.push(Math.floor(Math.random()*(rows*cols)));playing=true;s.textContent="OBSERVE";s.style.color="#ffff00";m.textContent="Pattern incoming...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;s.textContent="INPUT";s.style.color="#00e5ff";m.textContent="Repeat sequence.";return}flash(seq[i]);i++},800)}function flash(i){cells[i].classList.add('active');setTimeout(()=>cells[i].classList.remove('active'),500)}function onClick(e){if(playing)return;let i=parseInt(e.target.dataset.idx);if(i===seq[idx]){flash(i);idx++;if(idx===seq.length){playing=true;m.textContent="Sequence Accepted.";level++;setTimeout(level>max?win:startLevel,500)}}else{playing=true;e.target.classList.add('error');document.getElementById('container').classList.add('shake');setTimeout(()=>{e.target.classList.remove('error');document.getElementById('container').classList.remove('shake')},500);tracebackVal+=34;t.style.width=tracebackVal+"%";m.textContent="PATTERN MISMATCH DETECTED";tracebackVal>=100?setTimeout(startGame,2000):setTimeout(replay,1000)}}function replay(){idx=0;m.textContent="Re-displaying pattern...";let i=0;interval=setInterval(()=>{if(i>=seq.length){clearInterval(interval);playing=false;m.textContent="Repeat sequence."}else flash(seq[i++])},600)}function updateUI(){l.textContent=`LVL: ${level}/${max}`;t.style.width=tracebackVal+"%"}function win(){w.style.display="flex"}initGrid();setTimeout(startGame,1000)})();
 </script>
 </body>
 </html>
