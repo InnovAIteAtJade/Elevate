@@ -5,107 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CORE</title>
 <style>
-body {
-    margin:0;
-    background:white;
-    color:#1B5287;
-    font-family:"Courier New", monospace;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    flex-direction:column;
-    overflow:hidden;
-}
-#coreTextContainer {
-    text-align:center;
-}
-#coreTextContainer p {
-    opacity:0;
-    margin:8px 0;
-    font-size:2rem;
-    color:#1B5287;
-    text-shadow: 0 0 5px #1B5287, 0 0 10px #1B5287, 0 0 15px #1B5287;
-}
+body{margin:0;background:white;color:#1B5287;font-family:"Courier New",monospace;display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;overflow:hidden}
+#coreTextContainer{text-align:center}
+#coreTextContainer p{opacity:0;margin:8px 0;font-size:2rem;color:#1B5287;text-shadow:0 0 5px #1B5287,0 0 10px #1B5287,0 0 15px #1B5287}
 </style>
 </head>
 <body>
 
 <div id="coreTextContainer">
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
+<p></p><p></p><p></p><p></p><p></p><p></p>
 </div>
 
 <script>
-// TYPING ANIMATION
-const _hi = "SGFja0lkZWE="; // Obfuscated "HackIdea"
-
-const lines = [
-    "ACCESS GRANTED",
-    "Initializing CORE Systems...",
-    "Decrypting Authentication...",
-    "Loading Secure Channels...",
-    "Welcome, Agent.",
-    "Please submit <b>" + atob(_hi) + "</b> to Win"
-];
-
-function startTyping() {
-    const container = document.getElementById('coreTextContainer');
-    let currentLine = 0;
-
-    function typeLine() {
-        if (currentLine >= lines.length) return;
-
-        const lineEl = container.children[currentLine];
-        lineEl.style.opacity = 1; // Make visible immediately so we see the typing
-        let charIndex = 0;
-        let currentText = ""; // Accumulator for innerHTML
-
-        function typeChar() {
-            if(charIndex < lines[currentLine].length){
-                const char = lines[currentLine][charIndex];
-                
-                // Check for HTML tag start
-                if (char === '<') {
-                    const closingIndex = lines[currentLine].indexOf('>', charIndex);
-                    if (closingIndex !== -1) {
-                        // Extract the full tag (e.g., "<b>")
-                        const tag = lines[currentLine].substring(charIndex, closingIndex + 1);
-                        currentText += tag;
-                        charIndex = closingIndex + 1;
-                        lineEl.innerHTML = currentText;
-                        // Recursively call immediately to type the next visible character without delay
-                        typeChar(); 
-                        return;
-                    }
-                }
-
-                currentText += char;
-                lineEl.innerHTML = currentText;
-                charIndex++;
-                setTimeout(typeChar, 80);
-            } else {
-                currentLine++;
-                if(currentLine < lines.length){
-                    setTimeout(typeLine, 300);
-                } else {
-                    // Redirect to Google after typing completes
-                    setTimeout(() => {
-                         window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc1b483Ht0Hw9_N6rymOC6ie44jmpKP-N3PMR09uTF52HduxA/viewform?usp=publish-editor";
-                    }, 2000);
-                }
-            }
-        }
-        typeChar();
-    }
-    typeLine();
-}
-
-startTyping();
+(()=>{if(sessionStorage.getItem("terminalAccess")!=="true"){location.href="gate.html";return}const _hi="SGFja0lkZWE=",lines=["ACCESS GRANTED","Initializing CORE Systems...","Decrypting Authentication...","Loading Secure Channels...","Welcome, Agent.","Please submit <b>"+atob(_hi)+"</b> to Win"];let c=0;const cont=document.getElementById("coreTextContainer");(function t(){if(c>=lines.length)return;let e=cont.children[c],i=0,s="";e.style.opacity=1;(function r(){if(i<lines[c].length){let h=lines[c][i];if(h==="<"){let j=lines[c].indexOf(">",i);if(j!==-1){s+=lines[c].substring(i,j+1);i=j+1;e.innerHTML=s;r();return}}s+=h;e.innerHTML=s;i++;setTimeout(r,80)}else{c++;c<lines.length?setTimeout(t,300):setTimeout(()=>location.href="https://docs.google.com/forms/d/e/1FAIpQLSc1b483Ht0Hw9_N6rymOC6ie44jmpKP-N3PMR09uTF52HduxA/viewform?usp=publish-editor",2000)}})()})()})();
 </script>
 
 </body>
