@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Portal</title>
+<script>if(!sessionStorage.getItem("s_p1")){document.documentElement.innerHTML="";throw new Error("Access Denied");}</script>
 <style>
 body{margin:0;background:#000;color:#0f0;font-family:Courier New,monospace;overflow:hidden}
 canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
@@ -16,25 +17,20 @@ canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 </style>
 </head>
 <body>
-
 <canvas id="matrix"></canvas>
-
 <div id="portal-container">
 <h1>ENTER PASSWORD TO ACCESS CORE</h1>
 <input id="passwordInput" type="text" placeholder="Password">
 <br>
 <button id="submitBtn">ENTER</button>
 </div>
-
 <div id="hiddenGameBox"></div>
-
 <script>
 (()=>{let A=document,B=window,C=A.getElementById.bind(A)
 let D=C("matrix"),E=D.getContext("2d")
 D.width=B.innerWidth;D.height=B.innerHeight
 let F="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@",G=16
 let H=Array(Math.floor(D.width/G)).fill(1)
-
 setInterval(()=>{E.fillStyle="rgba(0,0,0,.05)"
 E.fillRect(0,0,D.width,D.height)
 E.fillStyle="#1B5287";E.font=G+"px monospace"
@@ -42,24 +38,18 @@ for(let i=0;i<H.length;i++){
 E.fillText(F[Math.random()*F.length|0],i*G,H[i]*G)
 if(H[i]*G>D.height&&Math.random()>.975)H[i]=0
 H[i]++}},50)
-
 C("submitBtn").onclick=()=>alert("ACCESS DISABLED")
-
 let J=0
-C("hiddenGameBox").onclick=()=>{++J>3&&(location.href="Signal Harmonizer.html")}
-
+C("hiddenGameBox").onclick=()=>{++J>3&&(sessionStorage.setItem("s_p2","true"),location.href="Signal Harmonizer.html")}
 let K=()=>Math.floor(Math.random()*80+5)+"%"
 let L=C("hiddenGameBox");L.style.top=K();L.style.left=K()
-
 A.addEventListener("copy",e=>{
 e.preventDefault()
 let r=""
 for(let i=0;i<400;i++)r+=String.fromCharCode(33+Math.random()*90)
 e.clipboardData.setData("text/plain",r)
 })
-
 })();
 </script>
-
 </body>
 </html>
