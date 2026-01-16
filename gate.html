@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gate</title>
+<style>
+body{margin:0;background:#000;color:#0f0;font-family:Courier New,monospace;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#portal-container{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;animation:p 2.5s infinite ease-in-out}
+@keyframes p{0%{text-shadow:0 0 4px #fff,0 0 10px #fff,0 0 18px #fff;opacity:.85}50%{text-shadow:0 0 6px #fff,0 0 14px #fff,0 0 25px #fff;opacity:1}100%{text-shadow:0 0 4px #fff,0 0 10px #fff,0 0 18px #fff;opacity:.85}}
+#portal-container h1{color:#fff}
+#passwordInput{padding:10px;font-size:1.3rem;background:#000;color:#0f0;border:2px solid #FFB700;width:220px;text-align:center}
+#submitBtn{margin-top:15px;padding:10px 20px;font-size:1.1rem;background:#000;color:#0f0;border:2px solid #0f0;cursor:pointer}
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div id="portal-container">
+<h1>ENTER PASSWORD TO ACCESS CORE</h1>
+<input id="passwordInput" type="text" placeholder="Password">
+<br>
+<button id="submitBtn">ENTER</button>
+</div>
+
+<script>
+(()=>{let _=document,__=window,$=_.getElementById.bind(_),$$=$("matrix"),_$_=$$.getContext("2d");$$.width=__.innerWidth;$$.height=__.innerHeight;let _a="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@",_b=16,_c=Array(Math.floor($$.width/_b)).fill(1);setInterval(()=>{_$_["fillStyle"]="rgba(0,0,0,.05)";_$_["fillRect"](0,0,$$.width,$$.height);_$_["fillStyle"]="#1B5287";_$_["font"]=_b+"px monospace";for(let i=0;i<_c.length;i++){_$_["fillText"](_a[Math.random()*_a.length|0],i*_b,_c[i]*_b);if(_c[i]*_b>$$.height&&Math.random()>.975)_c[i]=0;_c[i]++}},50);let _d=x=>atob(x),_e=[_d("SUgyMDI2"),_d("Y29yZS5odG1s")],_f=String.fromCharCode(73,72,50,48,50,54);$("submitBtn").onclick=()=>{$("passwordInput").value===_f?location.href=_e[1]:alert("Incorrect password")}})();
+</script>
+
+</body>
+</html>
