@@ -2,145 +2,63 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Portal</title>
-
 <style>
-body {
-    margin: 0;
-    background: black;
-    color: #00ff00;
-    font-family: "Courier New", monospace;
-    overflow: hidden;
-}
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-/* Smooth neon pulse (replaces flicker/glitch) */
-#portal-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    animation: pulseGlow 2.5s infinite ease-in-out;
-}
-
-@keyframes pulseGlow {
-    0% { text-shadow: 0 0 4px #ffffff, 0 0 10px #ffffff, 0 0 18px #ffffff; opacity: 0.85; }
-    50% { text-shadow: 0 0 6px #ffffff, 0 0 14px #ffffff, 0 0 25px #ffffff; opacity: 1; }
-    100% { text-shadow: 0 0 4px #ffffff, 0 0 10px #ffffff, 0 0 18px #ffffff; opacity: 0.85; }
-}
-
-#portal-container h1 {
-    color: #ffffff;
-}
-
-#passwordInput {
-    padding: 10px;
-    font-size: 1.3rem;
-    background: black;
-    color: #00ff00;
-    border: 2px solid #FFB700;
-    outline: none;
-    width: 220px;
-    text-align: center;
-}
-
-#submitBtn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    background: black;
-    color: #00ff00;
-    border: 2px solid #00ff00;
-    cursor: pointer;
-}
-
-#hiddenGameBox {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    opacity: 0;
-}
+body{margin:0;background:#000;color:#0f0;font-family:Courier New,monospace;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#portal-container{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;animation:p 2.5s infinite ease-in-out}
+@keyframes p{0%{text-shadow:0 0 4px #fff,0 0 10px #fff,0 0 18px #fff;opacity:.85}50%{text-shadow:0 0 6px #fff,0 0 14px #fff,0 0 25px #fff;opacity:1}100%{text-shadow:0 0 4px #fff,0 0 10px #fff,0 0 18px #fff;opacity:.85}}
+#portal-container h1{color:#fff}
+#passwordInput{padding:10px;font-size:1.3rem;background:#000;color:#0f0;border:2px solid #FFB700;width:220px;text-align:center}
+#submitBtn{margin-top:15px;padding:10px 20px;font-size:1.1rem;background:#000;color:#0f0;border:2px solid #0f0;cursor:pointer}
+#hiddenGameBox{position:absolute;width:60px;height:60px;cursor:pointer;opacity:0}
 </style>
 </head>
-
 <body>
 
 <canvas id="matrix"></canvas>
 
 <div id="portal-container">
-    <h1>ENTER PASSWORD TO ACCESS CORE</h1>
-    <input type="text" id="passwordInput" placeholder="Password">
-    <br>
-    <button id="submitBtn">ENTER</button>
+<h1>ENTER PASSWORD TO ACCESS CORE</h1>
+<input id="passwordInput" type="text" placeholder="Password">
+<br>
+<button id="submitBtn">ENTER</button>
 </div>
 
 <div id="hiddenGameBox"></div>
 
 <script>
+(()=>{let A=document,B=window,C=A.getElementById.bind(A)
+let D=C("matrix"),E=D.getContext("2d")
+D.width=B.innerWidth;D.height=B.innerHeight
+let F="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@",G=16
+let H=Array(Math.floor(D.width/G)).fill(1)
 
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+setInterval(()=>{E.fillStyle="rgba(0,0,0,.05)"
+E.fillRect(0,0,D.width,D.height)
+E.fillStyle="#1B5287";E.font=G+"px monospace"
+for(let i=0;i<H.length;i++){
+E.fillText(F[Math.random()*F.length|0],i*G,H[i]*G)
+if(H[i]*G>D.height&&Math.random()>.975)H[i]=0
+H[i]++}},50)
 
-const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
-const fontSize = 16;
-const columns = Math.floor(canvas.width / fontSize);
-const drops = Array(columns).fill(1);
+C("submitBtn").onclick=()=>alert("ACCESS DISABLED")
 
-function drawMatrix() {
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#1B5287";
-    ctx.font = fontSize + "px monospace";
+let J=0
+C("hiddenGameBox").onclick=()=>{++J>3&&(location.href="Signal Harmonizer.html")}
 
-    for(let i=0; i<drops.length; i++){
-        const text = chars[Math.floor(Math.random()*chars.length)];
-        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-    }
-}
-setInterval(drawMatrix, 50);
+let K=()=>Math.floor(Math.random()*80+5)+"%"
+let L=C("hiddenGameBox");L.style.top=K();L.style.left=K()
 
+A.addEventListener("copy",e=>{
+e.preventDefault()
+let r=""
+for(let i=0;i<400;i++)r+=String.fromCharCode(33+Math.random()*90)
+e.clipboardData.setData("text/plain",r)
+})
 
-const _p = "SUgyMDI2";            
-const _core = "Y29yZS5odG1s";          
-const _game = "U2lnbmFsIEhhcm1vbml6ZXIuaHRtbA=="; 
-
-document.getElementById("submitBtn").addEventListener("click", ()=>{
-    const pass = document.getElementById("passwordInput").value;
-    if(pass === atob(_p)){
-        window.location.href = atob(_core);
-    } else {
-        alert("Incorrect password");
-    }
-});
-
-let _c = 0;
-document.getElementById("hiddenGameBox").addEventListener("click", ()=>{
-    _c++;
-    if(_c >= 4){
-        window.location.href = atob(_game);
-    }
-});
-
-const _hx = "NzAl";   // "70%"
-const _hy = "MjUl";   // "25%"
-
-const box = document.getElementById("hiddenGameBox");
-box.style.top = atob(_hx);
-box.style.left = atob(_hy);
+})();
 </script>
 
 </body>
