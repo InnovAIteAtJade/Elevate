@@ -102,7 +102,11 @@ const encrypted=decodedPassword;
 const msg=`Archival Notice:
 Reference segment ${encrypted} has been recorded in the unauthorized-access audit log.
 
+SYSTEM LOG MESSAGE:
+Please use IH2026 as password on next portal.
+
 Subsystems request immediate transition.`;
+console.log("%c SYSTEM LOG: Please use IH2026 as password on next portal", "background: #1B5287; color: white; padding: 5px;");
 const popup=document.createElement("div");
 popup.style.position="fixed";popup.style.top="50%";popup.style.left="50%";popup.style.transform="translate(-50%,-50%)";popup.style.background="black";popup.style.border="2px solid #1B5287";popup.style.padding="20px";popup.style.zIndex="999999";popup.style.color="#FFB700";popup.style.width="420px";popup.style.textAlign="center";popup.style.whiteSpace="pre-line";popup.innerHTML=msg;
 const btn=document.createElement("button");btn.innerText="OK";btn.style.marginTop="15px";btn.style.color="#FFB700";btn.style.background="black";btn.style.border="1px solid #1B5287";btn.style.padding="6px";
