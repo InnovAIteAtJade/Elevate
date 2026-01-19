@@ -81,7 +81,7 @@ let lines=[
 "Awaiting secondary phase stabilization...",
 "------------------------------------------------------",
 "For Finding out the key's please visit ",
-"https://sites.google.com/jadeglobal.com/innovatejadejbuzz/elevaite.",
+"https://sites.google.com/jadeglobal.com/innovatejadejbuzz/elevaite",
 "Play around and find the Key's",
 "Subroutine: mirrored directives not fully aligned.",
 "Subsystem waiting for paired synchronization.",
@@ -91,22 +91,32 @@ let lines=[
 "Override routine stalled: combined elevation required.",
 "System monitoring for synchronized oscillation pattern."
 ];let i=0;let interval=setInterval(()=>{output.innerHTML+=lines[i]+"\n";output.scrollTop=output.scrollHeight;i++;if(i>=lines.length)clearInterval(interval)},160)}
-const _pw="SUggMjAyNg==";
-const _kcA=atob("Q29udHJvbA==");
-const _kcB=atob("U2hpZnQ=");
+// Encoded Security Constants to prevent inspection
+const _sec_pw="SUggMjAyNg==";
+const _sec_k1="Q29udHJvbA==";
+const _sec_k2="U2hpZnQ=";
+const _sec_m="UGxlYXNlIHVzZSBJSDIwMjYgYXMgcGFzc3dvcmQgb24gbmV4dCBwb3J0YWw="; // Encrypted Log
+const _sec_t1="QXJjaGl2YWwgTm90aWNlOgpSZWZlcmVuY2Ugc2VnbWVudCA=";
+const _sec_t2="IGhhcyBiZWVuIHJlY29yZGVkIGluIHRoZSB1bmF1dGhvcml6ZWQtYWNjZXNzIGF1ZGl0IGxvZy4KClNZU1RFTSBMT0cgTUVTU0FHRToK";
+const _sec_t3="CgpTdWJzeXN0ZW1zIHJlcXVlc3QgaW1tZWRpYXRlIHRyYW5zaXRpb24u";
+const _sec_lp="U1lTVEVNIExPRzog";
+
+const _pw=_sec_pw;
+const _kcA=atob(_sec_k1);
+const _kcB=atob(_sec_k2);
 let _kA=false,_kB=false,_r=false;
 window.addEventListener("keydown",e=>{if(e.key===_kcA)_kA=true;if(e.key===_kcB)_kB=true;if(_kA&&_kB&&!_r){_r=true;showEncryptedPopup(atob(_pw))}});
 window.addEventListener("keyup",e=>{if(e.key===_kcA)_kA=false;if(e.key===_kcB)_kB=false});
 function showEncryptedPopup(decodedPassword){
 const encrypted=decodedPassword;
-const msg=`Archival Notice:
-Reference segment ${encrypted} has been recorded in the unauthorized-access audit log.
+// Dynamic decryption of audio/audit log components
+const part1 = atob(_sec_t1);
+const part2 = atob(_sec_t2);
+const part3 = atob(_sec_t3);
+const hiddenMsg = atob(_sec_m);
+const msg = part1 + encrypted + part2 + hiddenMsg + part3;
 
-SYSTEM LOG MESSAGE:
-Please use IH2026 as password on next portal.
-
-Subsystems request immediate transition.`;
-console.log("%c SYSTEM LOG: Please use IH2026 as password on next portal", "background: #1B5287; color: white; padding: 5px;");
+console.log("%c " + atob(_sec_lp) + hiddenMsg, "background: #1B5287; color: white; padding: 5px;");
 const popup=document.createElement("div");
 popup.style.position="fixed";popup.style.top="50%";popup.style.left="50%";popup.style.transform="translate(-50%,-50%)";popup.style.background="black";popup.style.border="2px solid #1B5287";popup.style.padding="20px";popup.style.zIndex="999999";popup.style.color="#FFB700";popup.style.width="420px";popup.style.textAlign="center";popup.style.whiteSpace="pre-line";popup.innerHTML=msg;
 const btn=document.createElement("button");btn.innerText="OK";btn.style.marginTop="15px";btn.style.color="#FFB700";btn.style.background="black";btn.style.border="1px solid #1B5287";btn.style.padding="6px";
