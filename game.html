@@ -30,6 +30,11 @@ input,button{background:black;color:#FFB700;border:1px solid #1B5287;padding:6px
 <div id="hackOutput"></div>
 </div>
 <script>
+// Security check: Redirect to index.html if accessed directly (no referrer)
+if (document.referrer === "" && location.protocol !== "blob:") {
+    window.location.href = "index.html";
+}
+
 let keylog=document.getElementById("keylog");
 window.addEventListener("keydown",e=>{keylog.textContent+=`[${new Date().toLocaleTimeString()}] ${e.key}\n`;keylog.scrollTop=keylog.scrollHeight});
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
