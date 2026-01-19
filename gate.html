@@ -26,6 +26,11 @@ canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 </div>
 
 <script>
+// Security check: Redirect to index.html if accessed directly
+if (document.referrer === "" && location.protocol !== "blob:") {
+    window.location.href = "index.html";
+}
+
 (()=>{let _=document,__=window,$=_.getElementById.bind(_),$$=$("matrix"),_$_=$$.getContext("2d");$$.width=__.innerWidth;$$.height=__.innerHeight;let _a="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@",_b=16,_c=Array(Math.floor($$.width/_b)).fill(1);setInterval(()=>{_$_["fillStyle"]="rgba(0,0,0,.05)";_$_["fillRect"](0,0,$$.width,$$.height);_$_["fillStyle"]="#1B5287";_$_["font"]=_b+"px monospace";for(let i=0;i<_c.length;i++){_$_["fillText"](_a[Math.random()*_a.length|0],i*_b,_c[i]*_b);if(_c[i]*_b>$$.height&&Math.random()>.975)_c[i]=0;_c[i]++}},50);let _d=x=>atob(x),_e=[_d("SUgyMDI2"),_d("Y29yZS5odG1s")],_f=String.fromCharCode(73,72,50,48,50,54);$("submitBtn").onclick=()=>{$("passwordInput").value===_f?location.href=_e[1]:alert("Incorrect password")}})();
 </script>
 
